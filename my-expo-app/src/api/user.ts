@@ -1,15 +1,22 @@
 import { request } from './client';
 
-// TODO: Obtener datos del usuario autenticado
-// request('/api/usuarios/ENDPOINT_QUE_DEFINAN')
+// --- MOCK: datos de prueba mientras no hay backend ---
 export async function getMyProfile() {
-  // TODO: request('EL BACKEND QUE USTED DEFINA') — GET, el token se envía automático
-  return {};
+  // TODO: cuando el backend esté listo, descomentar la línea de abajo
+  // return request('/api/usuarios/obtener-informacion');
+  return {
+    id: 1,
+    username: 'Luz Alba',
+    email: 'luzalba@gmail.com',
+    telefono: '3205363052',
+    roles: ['ROLE_CLIENT'],
+  };
 }
 
-// TODO: Actualizar datos del usuario (username, telefono)
-// request('/api/usuarios/ENDPOINT_QUE_DEFINAN', { username, telefono }, 'PUT')
-export async function updateProfile(data: { username?: string; telefono?: string }) {
-  // TODO: request('EL BACKEND QUE USTED DEFINA, data, 'PUT')
-  return {};
+export async function updateProfile(
+  data: { username?: string; telefono?: string }
+) {
+  // TODO: cuando el backend esté listo, descomentar la línea de abajo
+  // return request('/api/usuarios/actualizar', data, 'PUT');
+  return { ...data };
 }
