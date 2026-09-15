@@ -4,10 +4,7 @@ import com.proyecto_moviles.oficiar.auth.JwtService;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioInvalidoException;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolNoPermitidoException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.BadCredentialsException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.CamposVaciosException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.InvalidEmailException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.UsuarioExistenteException;
+import com.proyecto_moviles.oficiar.exceptions.UserExceptions.*;
 import com.proyecto_moviles.oficiar.models.dto.RegisterRequest;
 import com.proyecto_moviles.oficiar.models.entities.Perfil;
 import com.proyecto_moviles.oficiar.models.entities.Role;
@@ -73,6 +70,10 @@ public class AuthController {
         var user = usuarioRepo.findByEmail(email)
                 .orElseThrow(() -> new InvalidEmailException("Email no encontrado"));
 
+        // Si está inactivo no lo deja logear
+        if (Boolean.FALSE.equals(user.getActive())) {
+            throw new UsuarioInactivoException("Favor pedirle a soporte volver a habilitar su cuenta");
+        }
         // Autentica usando el username interno del usuario y la contraseña recibida
         authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
 

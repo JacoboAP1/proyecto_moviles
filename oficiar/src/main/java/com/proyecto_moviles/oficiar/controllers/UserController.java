@@ -1,11 +1,13 @@
 package com.proyecto_moviles.oficiar.controllers;
 
 import com.proyecto_moviles.oficiar.auth.JwtService;
+import com.proyecto_moviles.oficiar.models.entities.Perfil;
 import com.proyecto_moviles.oficiar.models.entities.Role;
 import com.proyecto_moviles.oficiar.models.entities.Users;
 import com.proyecto_moviles.oficiar.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,5 +75,18 @@ public class UserController {
             "access_token", newToken,
             "token_type", "Bearer"
         ));
+    }
+
+    @GetMapping("/listar_todos")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Users>> getAllPerfiles() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> deleteUserLogically(@PathVariable Long id) {
+        userService.softDeleteUser(id);
+        return ResponseEntity.ok(Map.of("message", "Usuario desactivado correctamente"));
     }
 }

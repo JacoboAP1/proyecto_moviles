@@ -1,10 +1,13 @@
 package com.proyecto_moviles.oficiar.services;
 
+import com.proyecto_moviles.oficiar.exceptions.UserExceptions.UserNoEncontradoException;
 import com.proyecto_moviles.oficiar.models.entities.Users;
 import com.proyecto_moviles.oficiar.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -49,5 +52,21 @@ public class UserService {
         }
 
         return usersRepository.save(user);
+    }
+
+    // READ: Obtener la lista completa de usuarios
+    @Transactional(readOnly = true)
+    public List<Users> getAllUsers() {
+        return usersRepository.findAll();
+    }
+
+    // DELETE (Lógico): Desactivar usuario por ID
+    @Transactional
+    public void softDeleteUser(Long id) {
+        Users user = usersRepository.findById(id)
+                .orElseThrow(() -> new UserNoEncontradoException("Intente ingresando otro ID"));
+
+        user.setActive(false);
+        usersRepository.save(user);
     }
 }

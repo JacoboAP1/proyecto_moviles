@@ -4,10 +4,7 @@ import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioAsociadoEx
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioInvalidoException;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolNoPermitidoException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.BadCredentialsException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.CamposVaciosException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.InvalidEmailException;
-import com.proyecto_moviles.oficiar.exceptions.UserExceptions.UsuarioExistenteException;
+import com.proyecto_moviles.oficiar.exceptions.UserExceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -108,6 +105,26 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
                         "error", "Solicitud inválida",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(UserNoEncontradoException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNoEncontrado(UserNoEncontradoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "Usuario no encontrado",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(UsuarioInactivoException.class)
+    public ResponseEntity<Map<String, Object>> handleUsuarioInactivo(UsuarioInactivoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "error", "Este usuario se encuentra eliminado o inactivo",
                         "message", ex.getMessage()
                 ));
     }
