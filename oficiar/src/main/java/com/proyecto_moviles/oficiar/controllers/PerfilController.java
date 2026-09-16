@@ -26,6 +26,12 @@ public class PerfilController {
         return ResponseEntity.ok(perfilService.getAllPerfiles());
     }
 
+    @GetMapping("/buscar")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Perfil>> searchPerfiles(@RequestParam String texto) {
+        return ResponseEntity.ok(perfilService.searchPerfiles(texto));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Perfil> getPerfilById(@PathVariable Long id) {
         return ResponseEntity.ok(perfilService.getPerfilById(id));

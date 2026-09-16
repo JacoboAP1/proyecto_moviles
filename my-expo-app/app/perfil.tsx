@@ -1,27 +1,45 @@
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, Text, TextInput, View } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import Button from '../src/components/Button';
+import Field from '../src/components/Field';
 import Logo from '../src/components/Logo';
 import { useSession } from '../src/session/context';
 import { getMyProfile, updateProfile } from '../src/api/user';
 
+type PerfilForm = { username: string; telefono: string };
+
 export default function Perfil() {
   const { user, signOut } = useSession();
-  const [username, setUsername] = useState('');
-  const [telefono, setTelefono] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const { control, handleSubmit, reset, formState } = useForm<PerfilForm>();
 
   useEffect(() => {
     getMyProfile().then((data) => {
-      setUsername(data.username || '');
-      setTelefono(data.telefono || '');
+      reset({
+        username: data.username || '',
+        telefono: data.telefono || '',
+      });
       setLoading(false);
     });
-  }, []);
+  }, [reset]);
 
-  const handleGuardar = async () => {
+  const submit = async (data: PerfilForm) => {
+    const { dirtyFields } = formState;
+    const changes: Record<string, string> = {
+      ...(dirtyFields.username ? { username: data.username } : {}),
+      ...(dirtyFields.telefono ? { telefono: data.telefono } : {}),
+    };
+
+    if (Object.keys(changes).length === 0) {
+      Alert.alert('Info', 'No hay cambios para guardar');
+      return;
+    }
+
     try {
-      await updateProfile({ username, telefono });
+      await updateProfile(changes);
+      reset(data);
       Alert.alert('Listo', 'Perfil actualizado');
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -36,10 +54,10 @@ export default function Perfil() {
         <Logo size="sm" light />
         <View className="mt-2 h-20 w-20 items-center justify-center rounded-full bg-oficiar-blue">
           <Text className="text-3xl font-bold text-white">
-            {username.charAt(0).toUpperCase()}
+            {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
           </Text>
         </View>
-        <Text className="text-lg font-bold text-white">{username}</Text>
+        <Text className="text-lg font-bold text-white">{user?.name}</Text>
         <Text className="text-sm text-oficiar-blue">{user?.email}</Text>
       </View>
 
@@ -48,36 +66,39 @@ export default function Perfil() {
           Mi <Text className="text-oficiar-blue">informacion</Text>
         </Text>
 
-        <View className="gap-1">
-          <Text className="text-sm font-semibold text-neutral-500">Nombre</Text>
-          <TextInput
-            className="rounded-xl bg-white px-4 py-3 text-oficiar-very-dark"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
+        <Field
+          control={control}
+          name="username"
+          label="Nombre"
+          rules={{
+            required: 'El nombre es obligatorio',
+            maxLength: { value: 100, message: 'Máximo 100 caracteres' },
+          }}
+        />
 
         <View className="gap-1">
           <Text className="text-sm font-semibold text-neutral-500">Email</Text>
-          <TextInput
-            className="rounded-xl bg-neutral-200 px-4 py-3 text-neutral-500"
-            value={user?.email || ''}
-            editable={false}
-          />
+          <View className="rounded-xl bg-neutral-200 px-4 py-3">
+            <Text className="text-neutral-500">{user?.email || ''}</Text>
+          </View>
         </View>
 
-        <View className="gap-1">
-          <Text className="text-sm font-semibold text-neutral-500">Telefono</Text>
-          <TextInput
-            className="rounded-xl bg-white px-4 py-3 text-oficiar-very-dark"
-            value={telefono}
-            onChangeText={setTelefono}
-            keyboardType="phone-pad"
-          />
-        </View>
+        <Field
+          control={control}
+          name="telefono"
+          label="Telefono"
+          keyboardType="phone-pad"
+          rules={{
+            maxLength: { value: 20, message: 'Máximo 20 caracteres' },
+          }}
+        />
 
         <View className="mt-4 gap-3">
-          <Button text="Guardar cambios" onPress={handleGuardar} />
+          <Button
+            text={formState.isSubmitting ? 'Guardando...' : 'Guardar cambios'}
+            onPress={handleSubmit(submit)}
+            disabled={formState.isSubmitting}
+          />
           <Button text="Cerrar sesion" onPress={signOut} variant="secondary" />
         </View>
       </ScrollView>

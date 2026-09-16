@@ -87,6 +87,7 @@ export default function Register() {
         rules={{
           required: 'El nombre es obligatorio',
           minLength: { value: 2, message: 'Mínimo 2 caracteres' },
+          maxLength: { value: 100, message: 'Máximo 100 caracteres' },
         }}
       />
       <Field
@@ -98,6 +99,7 @@ export default function Register() {
         rules={{
           required: 'El correo es obligatorio',
           pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
+          maxLength: { value: 150, message: 'Máximo 150 caracteres' },
         }}
       />
       <Field
@@ -109,6 +111,7 @@ export default function Register() {
         rules={{
           required: 'El teléfono es obligatorio',
           minLength: { value: 7, message: 'Mínimo 7 dígitos' },
+          maxLength: { value: 20, message: 'Máximo 20 caracteres' },
         }}
       />
       <Field
@@ -120,6 +123,7 @@ export default function Register() {
         rules={{
           required: 'La contraseña es obligatoria',
           minLength: { value: 4, message: 'Mínimo 4 caracteres' },
+          maxLength: { value: 50, message: 'Máximo 50 caracteres' },
         }}
       />
       <Field

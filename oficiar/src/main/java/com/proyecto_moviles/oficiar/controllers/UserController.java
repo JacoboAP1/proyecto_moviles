@@ -89,4 +89,17 @@ public class UserController {
         userService.softDeleteUser(id);
         return ResponseEntity.ok(Map.of("message", "Usuario desactivado correctamente"));
     }
+
+    @PutMapping("/reactivar/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> reactivateUser(@PathVariable Long id) {
+        userService.reactivateUser(id);
+        return ResponseEntity.ok(Map.of("message", "Usuario reactivado correctamente"));
+    }
+
+    @GetMapping("/buscar")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Users>> searchUsers(@RequestParam String texto) {
+        return ResponseEntity.ok(userService.searchUsers(texto));
+    }
 }

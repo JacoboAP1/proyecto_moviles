@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,4 +21,7 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long> {
     // Consulta si existen usuarios asociados a este id de perfil en la relación M:M
     @Query("SELECT COUNT(u) > 0 FROM Users u JOIN u.perfiles p WHERE p.id = :perfilId")
     boolean isPerfilInUse(@Param("perfilId") Long perfilId);
+
+    // Buscar oficios por texto parcial (ignorando mayúsculas)
+    List<Perfil> findByOficioContainingIgnoreCase(String oficio);
 }

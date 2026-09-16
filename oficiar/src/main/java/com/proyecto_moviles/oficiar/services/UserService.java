@@ -69,4 +69,20 @@ public class UserService {
         user.setActive(false);
         usersRepository.save(user);
     }
+
+    // REACTIVAR: Volver a activar un usuario desactivado
+    @Transactional
+    public void reactivateUser(Long id) {
+        Users user = usersRepository.findById(id)
+                .orElseThrow(() -> new UserNoEncontradoException("Intente ingresando otro ID"));
+
+        user.setActive(true);
+        usersRepository.save(user);
+    }
+
+    // BUSCAR: Buscar usuarios por nombre o email
+    @Transactional(readOnly = true)
+    public List<Users> searchUsers(String texto) {
+        return usersRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(texto, texto);
+    }
 }

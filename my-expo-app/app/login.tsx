@@ -40,6 +40,7 @@ export default function Login() {
         rules={{
           required: 'El correo es obligatorio',
           pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
+          maxLength: { value: 150, message: 'Máximo 150 caracteres' },
         }}
       />
       <Field
@@ -48,7 +49,10 @@ export default function Login() {
         label="Contraseña"
         secureTextEntry
         placeholder="••••••••"
-        rules={{ required: 'La contraseña es obligatoria' }}
+        rules={{
+          required: 'La contraseña es obligatoria',
+          maxLength: { value: 50, message: 'Máximo 50 caracteres' },
+        }}
       />
 
       {!!formState.errors.root && (

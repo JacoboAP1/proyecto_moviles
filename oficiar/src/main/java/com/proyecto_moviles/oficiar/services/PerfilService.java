@@ -70,6 +70,12 @@ public class PerfilService {
         return perfilRepository.save(perfilExistente);
     }
 
+    // BUSCAR: Buscar oficios por texto parcial
+    @Transactional(readOnly = true)
+    public List<Perfil> searchPerfiles(String texto) {
+        return perfilRepository.findByOficioContainingIgnoreCase(texto);
+    }
+
     // DELETE: Eliminar un oficio por ID solo si no está en uso
     @Transactional
     public void deletePerfil(Long id) {

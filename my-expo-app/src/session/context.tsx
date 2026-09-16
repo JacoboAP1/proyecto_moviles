@@ -1,6 +1,7 @@
 import { createContext, use, useState, type PropsWithChildren } from 'react';
 import * as api from '../api/auth';
 import { setToken } from '../api/client';
+import { getMyProfile } from '../api/user';
 import type { Role, User } from '../types';
 
 export interface SignUpData {
@@ -33,10 +34,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const signIn = async (email: string, password: string) => {
     const session = await api.login(email.trim().toLowerCase(), password);
     setToken(session.token);
+    const profile = await getMyProfile();
     setUser({
-      name: email.trim().toLowerCase(),
-      email: email.trim().toLowerCase(),
-      telefono: '',
+      name: profile.username,
+      email: profile.email,
+      telefono: profile.telefono,
       roles: session.roles,
     });
   };
