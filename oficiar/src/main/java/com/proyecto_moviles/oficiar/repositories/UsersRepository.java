@@ -8,8 +8,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users,Long> {
+public interface UsersRepository extends JpaRepository<Users, Long> {
+
     Optional<Users> findByUsername(String username);
+
     Optional<Users> findByEmail(String email);
-    List<Users> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String username, String email);
+
+    List<Users> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+            String username,
+            String email
+    );
+
+    boolean existsByRoles_Id(Long roleId);
 }
