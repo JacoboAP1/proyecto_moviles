@@ -1,5 +1,6 @@
 package com.proyecto_moviles.oficiar.services;
 
+import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolAsignadoException;
 import com.proyecto_moviles.oficiar.models.entities.Role;
 import com.proyecto_moviles.oficiar.repositories.RoleRepository;
 import com.proyecto_moviles.oficiar.repositories.UsersRepository;
@@ -115,10 +116,7 @@ public class RoleService {
                 usersRepository.existsByRoles_Id(id);
 
         if (roleAssigned) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "No se puede eliminar el rol porque tiene usuarios asignados"
-            );
+            throw new RolAsignadoException("Este rol está asignado a un usuario y no se puede eliminar");
         }
 
         roleRepository.delete(role);

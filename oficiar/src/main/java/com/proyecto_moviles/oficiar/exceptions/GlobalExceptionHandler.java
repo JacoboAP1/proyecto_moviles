@@ -3,6 +3,7 @@ package com.proyecto_moviles.oficiar.exceptions;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioAsociadoException;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioInvalidoException;
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
+import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolAsignadoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolNoPermitidoException;
 import com.proyecto_moviles.oficiar.exceptions.UserExceptions.*;
 import org.springframework.http.HttpStatus;
@@ -125,6 +126,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of(
                         "error", "Este usuario se encuentra eliminado o inactivo",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(RolAsignadoException.class)
+    public ResponseEntity<Map<String, Object>> handleRolAsignado(RolAsignadoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "Error al eliminar el rol",
                         "message", ex.getMessage()
                 ));
     }
