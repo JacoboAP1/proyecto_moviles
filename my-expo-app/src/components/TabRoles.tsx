@@ -13,6 +13,7 @@ import {
   createRole,
   deleteRole,
   getRoles,
+  searchRoles,
   updateRole,
   type Role,
 } from '../api/roles';
@@ -23,6 +24,9 @@ export default function TabRoles() {
 
   const [nuevoRol, setNuevoRol] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const [texto, setTexto] = useState('');
+  const [buscando, setBuscando] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -35,6 +39,22 @@ export default function TabRoles() {
       Alert.alert('Error', (error as Error).message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const buscar = async () => {
+    const q = texto.trim();
+    if (!q) {
+      cargarTodos();
+      return;
+    }
+    setBuscando(true);
+    try {
+      setRoles(await searchRoles(q));
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message);
+    } finally {
+      setBuscando(false);
     }
   };
 
@@ -195,28 +215,52 @@ export default function TabRoles() {
     <View className="flex-1">
 
       {/* Crear rol */}
-      <View className="flex-row gap-2 border-b border-neutral-200 bg-white px-4 py-3">
-        <TextInput
-          className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
-          placeholder="Nuevo rol (ej: Supervisor)"
-          placeholderTextColor="#a3a3a3"
-          value={nuevoRol}
-          onChangeText={setNuevoRol}
-          maxLength={50}
-          editable={!submitting}
-          returnKeyType="done"
-          onSubmitEditing={handleCrear}
-        />
+      <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
+        <View className="flex-row gap-2">
+          <TextInput
+            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            placeholder="Nuevo rol (ej: Supervisor)"
+            placeholderTextColor="#a3a3a3"
+            value={nuevoRol}
+            onChangeText={setNuevoRol}
+            maxLength={50}
+            editable={!submitting}
+            returnKeyType="done"
+            onSubmitEditing={handleCrear}
+          />
 
-        <Pressable
-          onPress={handleCrear}
-          disabled={submitting}
-          className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50"
-        >
-          <Text className="font-semibold text-white">
-            {submitting ? '...' : 'Agregar'}
-          </Text>
-        </Pressable>
+          <Pressable
+            onPress={handleCrear}
+            disabled={submitting}
+            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50"
+          >
+            <Text className="font-semibold text-white">
+              {submitting ? '...' : 'Agregar'}
+            </Text>
+          </Pressable>
+        </View>
+
+        {/* Buscar rol */}
+        <View className="flex-row gap-2">
+          <TextInput
+            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            placeholder="Buscar rol..."
+            placeholderTextColor="#a3a3a3"
+            value={texto}
+            onChangeText={setTexto}
+            returnKeyType="search"
+            onSubmitEditing={buscar}
+          />
+          <Pressable
+            onPress={buscar}
+            disabled={buscando}
+            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50"
+          >
+            <Text className="font-semibold text-white">
+              {buscando ? '...' : 'Buscar'}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       {/* Lista de roles */}

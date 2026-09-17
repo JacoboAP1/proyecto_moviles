@@ -10,6 +10,11 @@ export async function getRoles(): Promise<Role[]> {
   return request<Role[]>('/api/roles');
 }
 
+// Buscar roles por texto
+export async function searchRoles(texto: string): Promise<Role[]> {
+  return request<Role[]>(`/api/roles/buscar?texto=${encodeURIComponent(texto)}`);
+}
+
 // Obtener un rol por ID
 export async function getRoleById(id: number): Promise<Role> {
   return request<Role>(`/api/roles/${id}`);

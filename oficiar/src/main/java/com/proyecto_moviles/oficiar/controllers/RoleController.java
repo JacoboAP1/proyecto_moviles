@@ -30,6 +30,12 @@ public class RoleController {
         return ResponseEntity.ok(roles);
     }
 
+    // BUSCAR ROLES POR TEXTO
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Role>> searchRoles(@RequestParam String texto) {
+        return ResponseEntity.ok(roleService.searchRoles(texto));
+    }
+
     // BUSCAR UN ROL POR ID
     @GetMapping("/{id}")
     public ResponseEntity<Role> getRoleById(@PathVariable Long id) {

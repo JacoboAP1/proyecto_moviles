@@ -68,7 +68,7 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    // ACTUALIZAR UN ROL
+    // ACTUALIZAR UN ROL (solo si no tiene usuarios asignados)
     public Role updateRole(Long id, Role role) {
 
         Role existingRole = roleRepository.findById(id)
@@ -76,6 +76,12 @@ public class RoleService {
                         HttpStatus.NOT_FOUND,
                         "Rol no encontrado"
                 ));
+
+        boolean roleAssigned = usersRepository.existsByRoles_Id(id);
+
+        if (roleAssigned) {
+            throw new RolAsignadoException("Este rol está asignado a un usuario y no se puede modificar");
+        }
 
         if (role == null || role.getName() == null || role.getName().isBlank()) {
             throw new ResponseStatusException(
@@ -101,6 +107,11 @@ public class RoleService {
         existingRole.setName(newRoleName);
 
         return roleRepository.save(existingRole);
+    }
+
+    // BUSCAR: Buscar roles por texto parcial
+    public List<Role> searchRoles(String texto) {
+        return roleRepository.findByNameContainingIgnoreCase(texto);
     }
 
     // ELIMINAR UN ROL
