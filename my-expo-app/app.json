@@ -1,37 +1,45 @@
 {
   "expo": {
     "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "slug": "oficiar",
     "version": "1.0.0",
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "experiments": {
       "tsconfigPaths": true
     },
-
     "scheme": "my-expo-app",
     "plugins": [
       "expo-router",
       "expo-status-bar"
     ],
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.victormanuel1.oficiar",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.victormanuel1.oficiar"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9a5c48cd-16d8-4833-9f25-e9fdf77bbd72"
       }
-    }
+    },
+    "owner": "victormanuel1"
   }
 }
