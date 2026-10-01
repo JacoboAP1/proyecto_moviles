@@ -1,21 +1,21 @@
 {
   "expo": {
-    "name": "my-expo-app",
+    "name": "OficiAR",
     "slug": "oficiar",
     "version": "1.0.0",
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo_oficiar.png"
     },
     "experiments": {
       "tsconfigPaths": true
     },
-    "scheme": "my-expo-app",
+    "scheme": "oficiar",
     "plugins": [
       "expo-router",
       "expo-status-bar"
     ],
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo_oficiar.png",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
@@ -29,8 +29,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logo_oficiar.png",
+        "backgroundColor": "#051A26"
       },
       "package": "com.victormanuel1.oficiar"
     },
