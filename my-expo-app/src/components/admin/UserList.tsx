@@ -8,10 +8,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { getAllUsers, searchUsers, softDeleteUser, reactivateUser, type UsuarioAdmin } from '../api/usuarios';
-import Badge from './Badge';
+import { getAllUsers, searchUsers, softDeleteUser, reactivateUser, type UsuarioAdmin } from '../../api/usuarios';
+import Badge from '../Badge';
 
-export default function TabUsuarios() {
+export default function UserList() {
   const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
   const [loading, setLoading] = useState(true);
   const [texto, setTexto] = useState('');

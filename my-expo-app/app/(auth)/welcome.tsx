@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
-import Button from '../src/components/Button';
-import Logo from '../src/components/Logo';
+import Button from '../../src/components/Button';
+import Logo from '../../src/components/Logo';
 
 export default function Welcome() {
   const router = useRouter();

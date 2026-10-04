@@ -16,9 +16,9 @@ import {
   searchRoles,
   updateRole,
   type Role,
-} from '../api/roles';
+} from '../../api/roles';
 
-export default function TabRoles() {
+export default function RoleList() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
 

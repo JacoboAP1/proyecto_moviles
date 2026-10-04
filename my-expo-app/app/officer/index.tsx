@@ -1,15 +1,11 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, Text, View, Pressable } from 'react-native';
-import Logo from './Logo';
-import Button from './Button';
-import type { User } from '../types';
+import Logo from '../../src/components/Logo';
+import Button from '../../src/components/Button';
+import { useSession } from '../../src/session/context';
 
-interface Props {
-  user: User;
-  onSignOut: () => void;
-}
-
-export default function OfficerHome({ user, onSignOut }: Props) {
+export default function OfficerHome() {
+  const { user, signOut } = useSession();
   const router = useRouter();
 
   return (
@@ -18,7 +14,7 @@ export default function OfficerHome({ user, onSignOut }: Props) {
         <View className="items-center gap-1">
           <Logo size="sm" light />
           <Text className="text-lg font-bold text-white">
-            Hola, {user.name}
+            Hola, {user?.name}
           </Text>
           <View className="mt-1 rounded-full bg-oficiar-blue/20 px-4 py-1">
             <Text className="text-xs font-semibold text-oficiar-blue">Officer</Text>
@@ -32,7 +28,7 @@ export default function OfficerHome({ user, onSignOut }: Props) {
           <Pressable className="rounded-lg px-4 py-2" onPress={() => {}}>
             <Text className="text-sm text-white/70">Solicitudes</Text>
           </Pressable>
-          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/perfil')}>
+          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/profile')}>
             <Text className="text-sm text-white/70">Perfil</Text>
           </Pressable>
         </View>
@@ -93,7 +89,7 @@ export default function OfficerHome({ user, onSignOut }: Props) {
         </View>
 
         <View className="mt-2 pb-4">
-          <Button text="Cerrar sesión" onPress={onSignOut} variant="secondary" />
+          <Button text="Cerrar sesión" onPress={signOut} variant="secondary" />
         </View>
       </ScrollView>
     </View>

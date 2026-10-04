@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import Badge from '../src/components/Badge';
-import Button from '../src/components/Button';
-import Logo from '../src/components/Logo';
-import TabOficios from '../src/components/TabOficios';
-import TabUsuarios from '../src/components/TabUsuarios';
-import TabRoles from '../src/components/TabRoles';
-import { useSession } from '../src/session/context';
+import Badge from '../../src/components/Badge';
+import Button from '../../src/components/Button';
+import Logo from '../../src/components/Logo';
+import TradeList from '../../src/components/admin/TradeList';
+import UserList from '../../src/components/admin/UserList';
+import RoleList from '../../src/components/admin/RoleList';
+import { useSession } from '../../src/session/context';
 
 type Tab = 'oficios' | 'usuarios' | 'roles';
 
@@ -44,13 +44,13 @@ export default function Admin() {
         ))}
       </View>
 
-      {tab === 'oficios' && <TabOficios />}
-      {tab === 'usuarios' && <TabUsuarios />}
-      {tab === 'roles' && <TabRoles />}
+      {tab === 'oficios' && <TradeList />}
+      {tab === 'usuarios' && <UserList />}
+      {tab === 'roles' && <RoleList />}
 
       <View className="flex-row gap-3 border-t border-neutral-200 bg-white px-6 py-3">
         <View className="flex-1">
-          <Button text="Perfil" onPress={() => router.push('/perfil')} variant="secondary" />
+          <Button text="Perfil" onPress={() => router.push('/profile')} variant="secondary" />
         </View>
         <View className="flex-1">
           <Button text="Cerrar sesion" onPress={signOut} variant="danger" />

@@ -8,10 +8,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { createPerfil, deletePerfil, getPerfiles, searchPerfiles } from '../api/perfiles';
-import type { Perfil } from '../types';
+import { createPerfil, deletePerfil, getPerfiles, searchPerfiles } from '../../api/perfiles';
+import type { Perfil } from '../../types';
 
-export default function TabOficios() {
+export default function TradeList() {
   const [perfiles, setPerfiles] = useState<Perfil[]>([]);
   const [loading, setLoading] = useState(true);
   const [nuevoOficio, setNuevoOficio] = useState('');

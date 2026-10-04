@@ -2,12 +2,12 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
-import Button from '../src/components/Button';
-import ChipSelect from '../src/components/ChipSelect';
-import Field from '../src/components/Field';
-import { getPerfiles } from '../src/api/perfiles';
-import { useSession } from '../src/session/context';
-import type { Perfil, Role } from '../src/types';
+import Button from '../../src/components/Button';
+import ChipSelect from '../../src/components/ChipSelect';
+import Field from '../../src/components/Field';
+import { getPerfiles } from '../../src/api/perfiles';
+import { useSession } from '../../src/session/context';
+import type { Perfil, Role } from '../../src/types';
 
 type RegisterForm = {
   name: string;

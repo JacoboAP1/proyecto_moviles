@@ -1,10 +1,8 @@
 import { Redirect } from 'expo-router';
-import ClientHome from '../src/components/ClientHome';
-import OfficerHome from '../src/components/OfficerHome';
 import { useSession } from '../src/session/context';
 
 export default function Home() {
-  const { user, signOut } = useSession();
+  const { user } = useSession();
   const role = user?.roles?.[0];
 
   if (role === 'ROLE_ADMIN') {
@@ -12,8 +10,8 @@ export default function Home() {
   }
 
   if (role === 'ROLE_CLIENT') {
-    return <ClientHome user={user!} onSignOut={signOut} />;
+    return <Redirect href="/client" />;
   }
 
-  return <OfficerHome user={user!} onSignOut={signOut} />;
+  return <Redirect href="/officer" />;
 }
