@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import Button from '../src/components/Button';
 import Field from '../src/components/Field';
 import Logo from '../src/components/Logo';
@@ -61,6 +61,9 @@ export default function Perfil() {
         <Text className="text-sm text-oficiar-blue">{user?.email}</Text>
       </View>
 
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView className="flex-1" contentContainerClassName="px-6 py-5 gap-4">
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
           Mi <Text className="text-oficiar-blue">informacion</Text>
@@ -102,6 +105,7 @@ export default function Perfil() {
           <Button text="Cerrar sesion" onPress={signOut} variant="secondary" />
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { ScrollView, Text, View } from 'react-native';
+import { useHeaderHeight } from 'expo-router/react-navigation';
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
 import { useSession } from '../../src/session/context';
@@ -9,6 +10,7 @@ type LoginForm = { email: string; password: string };
 
 export default function Login() {
   const { signIn } = useSession();
+  const headerHeight = useHeaderHeight();
   const { control, handleSubmit, setError, formState } = useForm<LoginForm>({
     defaultValues: { email: '', password: '' },
   });
@@ -22,10 +24,10 @@ export default function Login() {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-neutral-50"
-      contentContainerClassName="flex-1 justify-center gap-5 p-6"
-      keyboardShouldPersistTaps="handled">
+    <KeyboardAvoidingView
+      className="flex-1 justify-center gap-5 bg-neutral-50 p-6"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={headerHeight}>
       <View className="gap-1">
         <Text className="text-2xl font-bold text-neutral-900">Oficiar</Text>
         <Text className="text-neutral-500">Inicia sesión con tu cuenta</Text>
@@ -70,6 +72,6 @@ export default function Login() {
       <Link href="/welcome" className="text-center text-blue-600">
         Volver al inicio
       </Link>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

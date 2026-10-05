@@ -1,7 +1,8 @@
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { useHeaderHeight } from 'expo-router/react-navigation';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import Button from '../../src/components/Button';
 import ChipSelect from '../../src/components/ChipSelect';
 import Field from '../../src/components/Field';
@@ -23,6 +24,7 @@ export default function Register() {
   const isWorker = selectedRole === 'ROLE_WORKER';
 
   const { signUp } = useSession();
+  const headerHeight = useHeaderHeight();
   const { control, handleSubmit, setError, getValues, formState } = useForm<RegisterForm>({
     defaultValues: { name: '', email: '', telefono: '', password: '', confirm: '' },
   });
@@ -63,6 +65,10 @@ export default function Register() {
   };
 
   return (
+    <KeyboardAvoidingView
+      className="flex-1"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={headerHeight}>
     <ScrollView
       className="flex-1 bg-neutral-50"
       contentContainerClassName="gap-5 p-6"
@@ -168,5 +174,6 @@ export default function Register() {
         Volver al inicio
       </Link>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
