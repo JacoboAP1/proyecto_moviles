@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
@@ -8,11 +8,13 @@ import TradeList from '../components/admin/TradeList';
 import UserList from '../components/admin/UserList';
 import RoleList from '../components/admin/RoleList';
 import { useSession } from '../session/context';
+import { useLogout } from '../hooks/useLogout';
 
 type Tab = 'oficios' | 'usuarios' | 'roles';
 
 export default function Admin() {
-  const { user, signOut } = useSession();
+  const { user } = useSession();
+  const { logout } = useLogout();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>('oficios');
 
@@ -53,12 +55,7 @@ export default function Admin() {
           <Button text="Perfil" onPress={() => router.push('/profile')} variant="secondary" />
         </View>
         <View className="flex-1">
-          <Button text="Cerrar sesion" onPress={() => {
-            Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
-              { text: 'Cancelar', style: 'cancel' },
-              { text: 'Sí, salir', style: 'destructive', onPress: signOut },
-            ]);
-          }} variant="danger" />
+          <Button text="Cerrar sesion" onPress={logout} variant="danger" />
         </View>
       </View>
     </View>

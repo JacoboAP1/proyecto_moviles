@@ -5,12 +5,14 @@ import Button from '../components/Button';
 import Field from '../components/Field';
 import Logo from '../components/Logo';
 import { useSession } from '../session/context';
+import { useLogout } from '../hooks/useLogout';
 import { getMyProfile, updateProfile } from '../api/user';
 
 type PerfilForm = { username: string; telefono: string };
 
 export default function Profile() {
-  const { user, signOut } = useSession();
+  const { user } = useSession();
+  const { logout } = useLogout();
   const [loading, setLoading] = useState(true);
 
   const { control, handleSubmit, reset, formState } = useForm<PerfilForm>();
@@ -102,12 +104,7 @@ export default function Profile() {
             onPress={handleSubmit(submit)}
             disabled={formState.isSubmitting}
           />
-          <Button text="Cerrar sesion" onPress={() => {
-            Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
-              { text: 'Cancelar', style: 'cancel' },
-              { text: 'Sí, salir', style: 'destructive', onPress: signOut },
-            ]);
-          }} variant="secondary" />
+          <Button text="Cerrar sesion" onPress={logout} variant="secondary" />
         </View>
       </ScrollView>
       </KeyboardAvoidingView>
