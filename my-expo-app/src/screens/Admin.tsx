@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
@@ -9,14 +8,13 @@ import UserList from '../components/admin/UserList';
 import RoleList from '../components/admin/RoleList';
 import { useSession } from '../session/context';
 import { useLogout } from '../hooks/useLogout';
-
-type Tab = 'oficios' | 'usuarios' | 'roles';
+import { useAdminTabs } from '../hooks/useAdminTabs';
 
 export default function Admin() {
   const { user } = useSession();
   const { logout } = useLogout();
+  const { tab, setTab, tabs } = useAdminTabs();
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>('oficios');
 
   return (
     <View className="flex-1 bg-oficiar-gray">
@@ -29,18 +27,18 @@ export default function Admin() {
       </View>
 
       <View className="flex-row bg-oficiar-dark">
-        {(['oficios', 'usuarios', 'roles'] as Tab[]).map((t) => (
+        {tabs.map((t) => (
           <Pressable
-            key={t}
-            onPress={() => setTab(t)}
+            key={t.key}
+            onPress={() => setTab(t.key)}
             className={`flex-1 items-center py-3 ${
-              tab === t ? 'border-b-2 border-oficiar-blue' : ''
+              tab === t.key ? 'border-b-2 border-oficiar-blue' : ''
             }`}>
             <Text
               className={`text-sm font-semibold ${
-                tab === t ? 'text-oficiar-blue' : 'text-white/50'
+                tab === t.key ? 'text-oficiar-blue' : 'text-white/50'
               }`}>
-              {t === 'oficios' ? 'Oficios' : t === 'usuarios' ? 'Usuarios' : 'Roles'}
+              {t.label}
             </Text>
           </Pressable>
         ))}
