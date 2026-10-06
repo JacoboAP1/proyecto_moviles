@@ -13,6 +13,10 @@ export async function searchPerfiles(texto: string): Promise<Perfil[]> {
   return request<Perfil[]>(`/api/perfiles/buscar?texto=${encodeURIComponent(texto)}`);
 }
 
+export async function updatePerfil(id: number, oficio: string): Promise<Perfil> {
+  return request<Perfil>(`/api/perfiles/${id}`, { oficio }, 'PUT');
+}
+
 export async function deletePerfil(id: number): Promise<void> {
   await request(`/api/perfiles/${id}`, undefined, 'DELETE');
 }

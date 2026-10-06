@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { createPerfil, deletePerfil, getPerfiles, searchPerfiles } from '../../api/perfiles';
+import { createPerfil, deletePerfil, getPerfiles, searchPerfiles, updatePerfil } from '../../api/perfiles';
 import type { Perfil } from '../../types';
 
 export default function TradeList() {
@@ -18,6 +18,9 @@ export default function TradeList() {
   const [submitting, setSubmitting] = useState(false);
   const [texto, setTexto] = useState('');
   const [buscando, setBuscando] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const cargarTodos = async () => {
     try {
@@ -67,6 +70,39 @@ export default function TradeList() {
       Alert.alert('Error al crear', (error as Error).message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const comenzarEdicion = (perfil: Perfil) => {
+    setEditingId(perfil.id);
+    setEditingName(perfil.oficio);
+  };
+
+  const cancelarEdicion = () => {
+    setEditingId(null);
+    setEditingName('');
+  };
+
+  const guardarEdicion = async (perfil: Perfil) => {
+    const nombre = editingName.trim();
+    if (!nombre) {
+      Alert.alert('Error', 'El nombre del oficio no puede estar vacío');
+      return;
+    }
+    if (nombre.length > 100) {
+      Alert.alert('Error', 'Máximo 100 caracteres');
+      return;
+    }
+    setSaving(true);
+    try {
+      await updatePerfil(perfil.id, nombre);
+      cancelarEdicion();
+      await cargarTodos();
+      Alert.alert('Listo', 'El oficio fue actualizado');
+    } catch (error) {
+      Alert.alert('No se pudo actualizar', (error as Error).message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -153,16 +189,60 @@ export default function TradeList() {
             {texto.trim() ? 'No hay oficios que coincidan' : 'No hay oficios registrados'}
           </Text>
         }
-        renderItem={({ item }) => (
-          <View className="flex-row items-center justify-between rounded-xl bg-white px-4 py-3">
-            <Text className="flex-1 font-semibold text-oficiar-very-dark">{item.oficio}</Text>
-            <Pressable
-              onPress={() => handleEliminar(item)}
-              className="rounded-lg bg-red-50 px-3 py-2 active:opacity-80">
-              <Text className="text-sm font-semibold text-red-600">Eliminar</Text>
-            </Pressable>
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const editando = editingId === item.id;
+
+          return (
+            <View className="rounded-xl bg-white px-4 py-3">
+              {editando ? (
+                <>
+                  <TextInput
+                    className="rounded-lg border border-neutral-300 px-3 py-2"
+                    placeholder="Nombre del oficio"
+                    placeholderTextColor="#a3a3a3"
+                    value={editingName}
+                    onChangeText={setEditingName}
+                    maxLength={100}
+                    editable={!saving}
+                    autoFocus
+                  />
+                  <View className="mt-3 flex-row gap-2">
+                    <Pressable
+                      onPress={cancelarEdicion}
+                      disabled={saving}
+                      className="flex-1 items-center justify-center rounded-lg border border-neutral-300 px-3 py-2 active:opacity-80 disabled:opacity-50">
+                      <Text className="text-sm font-semibold text-neutral-600">Cancelar</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => guardarEdicion(item)}
+                      disabled={saving}
+                      className="flex-1 items-center justify-center rounded-lg bg-oficiar-blue-btn px-3 py-2 active:opacity-80 disabled:opacity-50">
+                      <Text className="text-sm font-semibold text-white">
+                        {saving ? '...' : 'Guardar'}
+                      </Text>
+                    </Pressable>
+                  </View>
+                </>
+              ) : (
+                <View className="flex-row items-center justify-between gap-3">
+                  <Text className="flex-1 font-semibold text-oficiar-very-dark">{item.oficio}</Text>
+                  <View className="flex-row gap-2">
+                    <Pressable
+                      onPress={() => comenzarEdicion(item)}
+                      className="rounded-lg bg-blue-50 px-3 py-2 active:opacity-80">
+                      <Text className="text-sm font-semibold text-oficiar-blue">Editar</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => handleEliminar(item)}
+                      className="rounded-lg bg-red-50 px-3 py-2 active:opacity-80">
+                      <Text className="text-sm font-semibold text-red-600">Eliminar</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+            </View>
+          );
+        }}
       />
     </View>
   );

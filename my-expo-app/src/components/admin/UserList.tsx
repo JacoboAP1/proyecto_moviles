@@ -16,6 +16,7 @@ export default function UserList() {
   const [loading, setLoading] = useState(true);
   const [texto, setTexto] = useState('');
   const [buscando, setBuscando] = useState(false);
+  const [filtro, setFiltro] = useState<'todos' | 'activos' | 'inactivos'>('todos');
 
   const cargarTodos = async () => {
     try {
@@ -90,6 +91,12 @@ export default function UserList() {
     );
   };
 
+  const usuariosFiltrados = usuarios.filter((u) => {
+    if (filtro === 'activos') return u.active;
+    if (filtro === 'inactivos') return !u.active;
+    return true;
+  });
+
   const getRol = (roles: { name: string }[]) => {
     const name = roles[0]?.name ?? '';
     if (name === 'ROLE_ADMIN') return { label: 'Admin', variant: 'red' as const };
@@ -107,28 +114,49 @@ export default function UserList() {
 
   return (
     <View className="flex-1">
-      <View className="flex-row gap-2 border-b border-neutral-200 bg-white px-4 py-3">
-        <TextInput
-          className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
-          placeholder="Buscar por nombre o email..."
-          placeholderTextColor="#a3a3a3"
-          value={texto}
-          onChangeText={setTexto}
-          returnKeyType="search"
-          onSubmitEditing={buscar}
-        />
-        <Pressable
-          onPress={buscar}
-          disabled={buscando}
-          className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
-          <Text className="font-semibold text-white">
-            {buscando ? '...' : 'Buscar'}
-          </Text>
-        </Pressable>
+      <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
+        <View className="flex-row gap-2">
+          <TextInput
+            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            placeholder="Buscar por nombre o email..."
+            placeholderTextColor="#a3a3a3"
+            value={texto}
+            onChangeText={setTexto}
+            returnKeyType="search"
+            onSubmitEditing={buscar}
+          />
+          <Pressable
+            onPress={buscar}
+            disabled={buscando}
+            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
+            <Text className="font-semibold text-white">
+              {buscando ? '...' : 'Buscar'}
+            </Text>
+          </Pressable>
+        </View>
+        <View className="flex-row gap-2">
+          {(['todos', 'activos', 'inactivos'] as const).map((opcion) => (
+            <Pressable
+              key={opcion}
+              onPress={() => setFiltro(opcion)}
+              className={`flex-1 items-center rounded-lg px-3 py-2 ${
+                filtro === opcion
+                  ? 'bg-oficiar-blue-btn'
+                  : 'border border-neutral-300'
+              }`}>
+              <Text
+                className={`text-sm font-semibold ${
+                  filtro === opcion ? 'text-white' : 'text-neutral-600'
+                }`}>
+                {opcion.charAt(0).toUpperCase() + opcion.slice(1)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
       </View>
 
       <FlatList
-        data={usuarios}
+        data={usuariosFiltrados}
         keyExtractor={(item) => String(item.id)}
         contentContainerClassName="px-4 py-3 gap-2"
         ListEmptyComponent={
