@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
@@ -53,7 +53,12 @@ export default function Admin() {
           <Button text="Perfil" onPress={() => router.push('/profile')} variant="secondary" />
         </View>
         <View className="flex-1">
-          <Button text="Cerrar sesion" onPress={signOut} variant="danger" />
+          <Button text="Cerrar sesion" onPress={() => {
+            Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Sí, salir', style: 'destructive', onPress: signOut },
+            ]);
+          }} variant="danger" />
         </View>
       </View>
     </View>

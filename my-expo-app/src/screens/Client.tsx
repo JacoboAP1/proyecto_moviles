@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, Text, View, Pressable } from 'react-native';
+import { Alert, ScrollView, Text, View, Pressable } from 'react-native';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
 import { useSession } from '../session/context';
@@ -92,7 +92,12 @@ export default function Client() {
         </View>
 
         <View className="mt-2 pb-4">
-          <Button text="Cerrar sesión" onPress={signOut} variant="secondary" />
+          <Button text="Cerrar sesión" onPress={() => {
+            Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Sí, salir', style: 'destructive', onPress: signOut },
+            ]);
+          }} variant="secondary" />
         </View>
       </ScrollView>
     </View>

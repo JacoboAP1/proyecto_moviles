@@ -102,7 +102,12 @@ export default function Profile() {
             onPress={handleSubmit(submit)}
             disabled={formState.isSubmitting}
           />
-          <Button text="Cerrar sesion" onPress={signOut} variant="secondary" />
+          <Button text="Cerrar sesion" onPress={() => {
+            Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Sí, salir', style: 'destructive', onPress: signOut },
+            ]);
+          }} variant="secondary" />
         </View>
       </ScrollView>
       </KeyboardAvoidingView>
