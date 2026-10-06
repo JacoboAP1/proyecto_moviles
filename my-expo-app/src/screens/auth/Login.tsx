@@ -1,27 +1,13 @@
 import { Link } from 'expo-router';
-import { useForm } from 'react-hook-form';
 import { useHeaderHeight } from 'expo-router/react-navigation';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import Button from '../../components/Button';
 import Field from '../../components/Field';
-import { useSession } from '../../session/context';
-
-type LoginForm = { email: string; password: string };
+import { useLogin } from '../../hooks/useLogin';
 
 export default function LoginScreen() {
-  const { signIn } = useSession();
+  const { control, submit, isSubmitting, error } = useLogin();
   const headerHeight = useHeaderHeight();
-  const { control, handleSubmit, setError, formState } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '' },
-  });
-
-  const submit = async ({ email, password }: LoginForm) => {
-    try {
-      await signIn(email, password);
-    } catch (error) {
-      setError('root', { message: (error as Error).message });
-    }
-  };
 
   return (
     <KeyboardAvoidingView
@@ -57,16 +43,16 @@ export default function LoginScreen() {
         }}
       />
 
-      {!!formState.errors.root && (
+      {!!error && (
         <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
-          {formState.errors.root.message}
+          {error}
         </Text>
       )}
 
       <Button
-        text={formState.isSubmitting ? 'Entrando…' : 'Entrar'}
-        onPress={handleSubmit(submit)}
-        disabled={formState.isSubmitting}
+        text={isSubmitting ? 'Entrando…' : 'Entrar'}
+        onPress={submit}
+        disabled={isSubmitting}
       />
 
       <Link href="/welcome" className="text-center text-blue-600">
