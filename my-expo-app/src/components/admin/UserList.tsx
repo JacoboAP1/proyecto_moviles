@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   Text,
@@ -10,6 +9,7 @@ import {
 } from 'react-native';
 import { searchUsers } from '../../api/usuarios';
 import { useUsers } from '../../hooks/useUsers';
+import { useSearch } from '../../hooks/useSearch';
 import Badge from '../Badge';
  
 export default function UserList() {
@@ -23,25 +23,8 @@ export default function UserList() {
     getRol,
   } = useUsers();
  
-  const [texto, setTexto] = useState('');
-  const [buscando, setBuscando] = useState(false);
+  const { texto, setTexto, buscando, buscar } = useSearch(searchUsers, setUsuarios, cargarTodos);
   const [filtro, setFiltro] = useState<'todos' | 'activos' | 'inactivos'>('todos');
- 
-  const buscar = async () => {
-    const q = texto.trim();
-    if (!q) {
-      cargarTodos();
-      return;
-    }
-    setBuscando(true);
-    try {
-      setUsuarios(await searchUsers(q));
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setBuscando(false);
-    }
-  };
  
   const usuariosFiltrados = usuarios.filter((u) => {
     if (filtro === 'activos') return u.active;
@@ -79,7 +62,6 @@ export default function UserList() {
             </Text>
           </Pressable>
         </View>
-        
         <View className="flex-row gap-2">
           {(['todos', 'activos', 'inactivos'] as const).map((opcion) => (
             <Pressable
@@ -113,7 +95,6 @@ export default function UserList() {
         renderItem={({ item }) => {
           const rol = getRol(item.roles);
           const isAdmin = item.roles[0]?.name === 'ROLE_ADMIN';
-
           return (
             <View className={`rounded-xl bg-white px-4 py-3 ${!item.active ? 'opacity-50' : ''}`}>
               <View className="flex-row items-center gap-3">
@@ -122,7 +103,6 @@ export default function UserList() {
                     {item.username.charAt(0).toUpperCase()}
                   </Text>
                 </View>
-
                 <View className="flex-1">
                   <Text className="font-semibold text-oficiar-very-dark" numberOfLines={1}>
                     {item.username}
@@ -131,7 +111,6 @@ export default function UserList() {
                     {item.email}
                   </Text>
                 </View>
-
                 <Badge text={rol.label} variant={rol.variant} />
               </View>
  
@@ -166,7 +145,6 @@ export default function UserList() {
           );
         }}
       />
-
     </View>
   );
 }

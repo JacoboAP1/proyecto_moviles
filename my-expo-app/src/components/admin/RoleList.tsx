@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { searchRoles, updateRole, type Role } from '../../api/roles';
 import { useRoles } from '../../hooks/useRoles';
+import { useSearch } from '../../hooks/useSearch';
  
 export default function RoleList() {
   const {
@@ -26,28 +27,11 @@ export default function RoleList() {
     nombreVisual,
   } = useRoles();
  
-  const [texto, setTexto] = useState('');
-  const [buscando, setBuscando] = useState(false);
+  const { texto, setTexto, buscando, buscar } = useSearch(searchRoles, setRoles, cargarTodos);
  
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
- 
-  const buscar = async () => {
-    const q = texto.trim();
-    if (!q) {
-      cargarTodos();
-      return;
-    }
-    setBuscando(true);
-    try {
-      setRoles(await searchRoles(q));
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setBuscando(false);
-    }
-  };
  
   const comenzarEdicion = (role: Role) => {
     setEditingId(role.id);
@@ -70,7 +54,6 @@ export default function RoleList() {
       return;
     }
     setSaving(true);
-
     try {
       await updateRole(role.id, nombre);
       cancelarEdicion();

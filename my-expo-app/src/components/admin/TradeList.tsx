@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { searchPerfiles, updatePerfil } from '../../api/perfiles';
 import { usePerfiles } from '../../hooks/usePerfiles';
+import { useSearch } from '../../hooks/useSearch';
 import type { Perfil } from '../../types';
  
 export default function TradeList() {
@@ -25,27 +26,11 @@ export default function TradeList() {
     handleEliminar,
   } = usePerfiles();
  
-  const [texto, setTexto] = useState('');
-  const [buscando, setBuscando] = useState(false);
+  const { texto, setTexto, buscando, buscar } = useSearch(searchPerfiles, setPerfiles, cargarTodos);
+ 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
- 
-  const buscar = async () => {
-    const q = texto.trim();
-    if (!q) {
-      cargarTodos();
-      return;
-    }
-    setBuscando(true);
-    try {
-      setPerfiles(await searchPerfiles(q));
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setBuscando(false);
-    }
-  };
  
   const comenzarEdicion = (perfil: Perfil) => {
     setEditingId(perfil.id);
