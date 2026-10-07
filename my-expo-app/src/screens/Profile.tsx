@@ -1,55 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import Button from '../components/Button';
 import Field from '../components/Field';
 import Logo from '../components/Logo';
 import { useSession } from '../session/context';
 import { useLogout } from '../hooks/useLogout';
-import { getMyProfile, updateProfile } from '../api/user';
-
-type PerfilForm = { username: string; telefono: string };
-
+import { useProfile } from '../hooks/useProfile';
+ 
 export default function Profile() {
   const { user } = useSession();
   const { logout } = useLogout();
-  const [loading, setLoading] = useState(true);
-
-  const { control, handleSubmit, reset, formState } = useForm<PerfilForm>();
-
-  useEffect(() => {
-    getMyProfile().then((data) => {
-      reset({
-        username: data.username || '',
-        telefono: data.telefono || '',
-      });
-      setLoading(false);
-    });
-  }, [reset]);
-
-  const submit = async (data: PerfilForm) => {
-    const { dirtyFields } = formState;
-    const changes: Record<string, string> = {
-      ...(dirtyFields.username ? { username: data.username } : {}),
-      ...(dirtyFields.telefono ? { telefono: data.telefono } : {}),
-    };
-
-    if (Object.keys(changes).length === 0) {
-      Alert.alert('Info', 'No hay cambios para guardar');
-      return;
-    }
-
-    try {
-      await updateProfile(changes);
-      reset(data);
-      Alert.alert('Listo', 'Perfil actualizado');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
-    }
-  };
-
+  const { control, loading, submit, isSubmitting } = useProfile();
+ 
   if (loading) return null;
-
+ 
   return (
     <View className="flex-1 bg-oficiar-gray">
       <View className="items-center gap-2 bg-oficiar-very-dark px-6 pb-5 pt-12">
@@ -62,7 +25,7 @@ export default function Profile() {
         <Text className="text-lg font-bold text-white">{user?.name}</Text>
         <Text className="text-sm text-oficiar-blue">{user?.email}</Text>
       </View>
-
+ 
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -70,7 +33,7 @@ export default function Profile() {
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
           Mi <Text className="text-oficiar-blue">informacion</Text>
         </Text>
-
+ 
         <Field
           control={control}
           name="username"
@@ -80,14 +43,14 @@ export default function Profile() {
             maxLength: { value: 100, message: 'Máximo 100 caracteres' },
           }}
         />
-
+ 
         <View className="gap-1">
           <Text className="text-sm font-semibold text-neutral-500">Email</Text>
           <View className="rounded-xl bg-neutral-200 px-4 py-3">
             <Text className="text-neutral-500">{user?.email || ''}</Text>
           </View>
         </View>
-
+ 
         <Field
           control={control}
           name="telefono"
@@ -97,12 +60,12 @@ export default function Profile() {
             maxLength: { value: 20, message: 'Máximo 20 caracteres' },
           }}
         />
-
+ 
         <View className="mt-4 gap-3">
           <Button
-            text={formState.isSubmitting ? 'Guardando...' : 'Guardar cambios'}
-            onPress={handleSubmit(submit)}
-            disabled={formState.isSubmitting}
+            text={isSubmitting ? 'Guardando...' : 'Guardar cambios'}
+            onPress={submit}
+            disabled={isSubmitting}
           />
           <Button text="Cerrar sesion" onPress={logout} variant="secondary" />
         </View>
