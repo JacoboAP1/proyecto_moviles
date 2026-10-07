@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -8,40 +8,31 @@ import {
   TextInput,
   View,
 } from 'react-native';
-
-import {
-  createRole,
-  deleteRole,
-  getRoles,
-  searchRoles,
-  updateRole,
-  type Role,
-} from '../../api/roles';
-
+import { searchRoles, updateRole, type Role } from '../../api/roles';
+import { useRoles } from '../../hooks/useRoles';
+ 
 export default function RoleList() {
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [nuevoRol, setNuevoRol] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
+  const {
+    roles,
+    setRoles,
+    loading,
+    cargarTodos,
+    nuevoRol,
+    setNuevoRol,
+    submitting,
+    handleCrear,
+    handleEliminar,
+    normalizarNombre,
+    nombreVisual,
+  } = useRoles();
+ 
   const [texto, setTexto] = useState('');
   const [buscando, setBuscando] = useState(false);
-
+ 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
-
-  const cargarTodos = async () => {
-    try {
-      setRoles(await getRoles());
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   const buscar = async () => {
     const q = texto.trim();
     if (!q) {
@@ -57,152 +48,41 @@ export default function RoleList() {
       setBuscando(false);
     }
   };
-
-  useEffect(() => {
-    cargarTodos();
-  }, []);
-
-  const normalizarNombre = (value: string) => {
-    const nombre = value
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g, '_');
-
-    if (!nombre) {
-      return '';
-    }
-
-    return nombre.startsWith('ROLE_')
-      ? nombre
-      : `ROLE_${nombre}`;
-  };
-
-  const nombreVisual = (name: string) => {
-    return name
-      .replace(/^ROLE_/, '')
-      .replace(/_/g, ' ');
-  };
-
-  const handleCrear = async () => {
-    const nombre = normalizarNombre(nuevoRol);
-
-    if (!nombre) {
-      Alert.alert('Error', 'Escribe el nombre del rol');
-      return;
-    }
-
-    if (nombre.length > 50) {
-      Alert.alert('Error', 'El nombre del rol es demasiado largo');
-      return;
-    }
-
-    setSubmitting(true);
-
-    try {
-      await createRole(nombre);
-
-      setNuevoRol('');
-      await cargarTodos();
-
-      Alert.alert(
-        'Listo',
-        `"${nombreVisual(nombre)}" fue agregado`,
-      );
-    } catch (error) {
-      Alert.alert(
-        'Error al crear',
-        (error as Error).message,
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+ 
   const comenzarEdicion = (role: Role) => {
     setEditingId(role.id);
     setEditingName(nombreVisual(role.name));
   };
-
+ 
   const cancelarEdicion = () => {
     setEditingId(null);
     setEditingName('');
   };
-
+ 
   const guardarEdicion = async (role: Role) => {
     const nombre = normalizarNombre(editingName);
-
     if (!nombre) {
-      Alert.alert(
-        'Error',
-        'El nombre del rol no puede estar vacío',
-      );
+      Alert.alert('Error', 'El nombre del rol no puede estar vacío');
       return;
     }
-
     if (nombre.length > 50) {
-      Alert.alert(
-        'Error',
-        'El nombre del rol es demasiado largo',
-      );
+      Alert.alert('Error', 'El nombre del rol es demasiado largo');
       return;
     }
-
     setSaving(true);
 
     try {
       await updateRole(role.id, nombre);
-
       cancelarEdicion();
       await cargarTodos();
-
-      Alert.alert(
-        'Listo',
-        'El rol fue actualizado',
-      );
+      Alert.alert('Listo', 'El rol fue actualizado');
     } catch (error) {
-      Alert.alert(
-        'No se pudo actualizar',
-        (error as Error).message,
-      );
+      Alert.alert('No se pudo actualizar', (error as Error).message);
     } finally {
       setSaving(false);
     }
   };
-
-  const handleEliminar = (role: Role) => {
-    Alert.alert(
-      'Eliminar rol',
-      `¿Seguro que quieres eliminar "${nombreVisual(role.name)}"?`,
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteRole(role.id);
-
-              await cargarTodos();
-
-              Alert.alert(
-                'Listo',
-                `"${nombreVisual(role.name)}" fue eliminado`,
-              );
-            } catch (error) {
-              Alert.alert(
-                'No se pudo eliminar',
-                (error as Error).message,
-              );
-            }
-          },
-        },
-      ],
-    );
-  };
-
+ 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -210,10 +90,10 @@ export default function RoleList() {
       </View>
     );
   }
-
+ 
   return (
     <View className="flex-1">
-
+ 
       {/* Crear rol */}
       <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
         <View className="flex-row gap-2">
@@ -228,7 +108,7 @@ export default function RoleList() {
             returnKeyType="done"
             onSubmitEditing={handleCrear}
           />
-
+ 
           <Pressable
             onPress={handleCrear}
             disabled={submitting}
@@ -239,7 +119,7 @@ export default function RoleList() {
             </Text>
           </Pressable>
         </View>
-
+ 
         {/* Buscar rol */}
         <View className="flex-row gap-2">
           <TextInput
@@ -262,7 +142,7 @@ export default function RoleList() {
           </Pressable>
         </View>
       </View>
-
+ 
       {/* Lista de roles */}
       <FlatList
         data={roles}
@@ -275,10 +155,10 @@ export default function RoleList() {
         }
         renderItem={({ item }) => {
           const editando = editingId === item.id;
-
+ 
           return (
             <View className="rounded-xl bg-white px-4 py-3">
-
+ 
               {editando ? (
                 <>
                   <TextInput
@@ -291,7 +171,7 @@ export default function RoleList() {
                     editable={!saving}
                     autoFocus
                   />
-
+ 
                   <View className="mt-3 flex-row gap-2">
                     <Pressable
                       onPress={cancelarEdicion}
@@ -302,7 +182,7 @@ export default function RoleList() {
                         Cancelar
                       </Text>
                     </Pressable>
-
+ 
                     <Pressable
                       onPress={() => guardarEdicion(item)}
                       disabled={saving}
@@ -316,17 +196,17 @@ export default function RoleList() {
                 </>
               ) : (
                 <View className="flex-row items-center justify-between gap-3">
-
+ 
                   <View className="flex-1">
                     <Text className="font-semibold text-oficiar-very-dark">
                       {nombreVisual(item.name)}
                     </Text>
-
+ 
                     <Text className="text-xs text-neutral-400">
                       {item.name}
                     </Text>
                   </View>
-
+ 
                   <View className="flex-row gap-2">
                     <Pressable
                       onPress={() => comenzarEdicion(item)}
@@ -336,7 +216,7 @@ export default function RoleList() {
                         Editar
                       </Text>
                     </Pressable>
-
+ 
                     <Pressable
                       onPress={() => handleEliminar(item)}
                       className="rounded-lg bg-red-50 px-3 py-2 active:opacity-80"
@@ -346,10 +226,10 @@ export default function RoleList() {
                       </Text>
                     </Pressable>
                   </View>
-
+ 
                 </View>
               )}
-
+ 
             </View>
           );
         }}
