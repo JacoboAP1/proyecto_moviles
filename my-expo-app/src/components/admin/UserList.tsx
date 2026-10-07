@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -8,26 +8,25 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { getAllUsers, searchUsers, softDeleteUser, reactivateUser, type UsuarioAdmin } from '../../api/usuarios';
+import { searchUsers } from '../../api/usuarios';
+import { useUsers } from '../../hooks/useUsers';
 import Badge from '../Badge';
-
+ 
 export default function UserList() {
-  const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    usuarios,
+    setUsuarios,
+    loading,
+    cargarTodos,
+    handleDesactivar,
+    handleReactivar,
+    getRol,
+  } = useUsers();
+ 
   const [texto, setTexto] = useState('');
   const [buscando, setBuscando] = useState(false);
   const [filtro, setFiltro] = useState<'todos' | 'activos' | 'inactivos'>('todos');
-
-  const cargarTodos = async () => {
-    try {
-      setUsuarios(await getAllUsers());
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   const buscar = async () => {
     const q = texto.trim();
     if (!q) {
@@ -43,67 +42,13 @@ export default function UserList() {
       setBuscando(false);
     }
   };
-
-  useEffect(() => { cargarTodos(); }, []);
-
-  const handleDesactivar = (u: UsuarioAdmin) => {
-    Alert.alert(
-      'Desactivar usuario',
-      `¿Seguro que quieres desactivar a "${u.username}"?\n\nNo podra iniciar sesion hasta que se reactive.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Desactivar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await softDeleteUser(u.id);
-              await cargarTodos();
-              Alert.alert('Listo', `"${u.username}" fue desactivado`);
-            } catch (error) {
-              Alert.alert('Error', (error as Error).message);
-            }
-          },
-        },
-      ],
-    );
-  };
-
-  const handleReactivar = (u: UsuarioAdmin) => {
-    Alert.alert(
-      'Reactivar usuario',
-      `¿Quieres reactivar a "${u.username}"?\n\nPodra volver a iniciar sesion.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Reactivar',
-          onPress: async () => {
-            try {
-              await reactivateUser(u.id);
-              await cargarTodos();
-              Alert.alert('Listo', `"${u.username}" fue reactivado`);
-            } catch (error) {
-              Alert.alert('Error', (error as Error).message);
-            }
-          },
-        },
-      ],
-    );
-  };
-
+ 
   const usuariosFiltrados = usuarios.filter((u) => {
     if (filtro === 'activos') return u.active;
     if (filtro === 'inactivos') return !u.active;
     return true;
   });
-
-  const getRol = (roles: { name: string }[]) => {
-    const name = roles[0]?.name ?? '';
-    if (name === 'ROLE_ADMIN') return { label: 'Admin', variant: 'red' as const };
-    if (name === 'ROLE_WORKER') return { label: 'Officer', variant: 'blue' as const };
-    return { label: 'Cliente', variant: 'green' as const };
-  };
-
+ 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -111,7 +56,7 @@ export default function UserList() {
       </View>
     );
   }
-
+ 
   return (
     <View className="flex-1">
       <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
@@ -134,6 +79,7 @@ export default function UserList() {
             </Text>
           </Pressable>
         </View>
+        
         <View className="flex-row gap-2">
           {(['todos', 'activos', 'inactivos'] as const).map((opcion) => (
             <Pressable
@@ -154,7 +100,7 @@ export default function UserList() {
           ))}
         </View>
       </View>
-
+ 
       <FlatList
         data={usuariosFiltrados}
         keyExtractor={(item) => String(item.id)}
@@ -167,6 +113,7 @@ export default function UserList() {
         renderItem={({ item }) => {
           const rol = getRol(item.roles);
           const isAdmin = item.roles[0]?.name === 'ROLE_ADMIN';
+
           return (
             <View className={`rounded-xl bg-white px-4 py-3 ${!item.active ? 'opacity-50' : ''}`}>
               <View className="flex-row items-center gap-3">
@@ -175,6 +122,7 @@ export default function UserList() {
                     {item.username.charAt(0).toUpperCase()}
                   </Text>
                 </View>
+
                 <View className="flex-1">
                   <Text className="font-semibold text-oficiar-very-dark" numberOfLines={1}>
                     {item.username}
@@ -183,9 +131,10 @@ export default function UserList() {
                     {item.email}
                   </Text>
                 </View>
+
                 <Badge text={rol.label} variant={rol.variant} />
               </View>
-
+ 
               <View className="mt-2 flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
                   <Badge
@@ -196,7 +145,7 @@ export default function UserList() {
                     <Text className="text-xs text-neutral-400">{item.telefono}</Text>
                   ) : null}
                 </View>
-
+ 
                 {!isAdmin && (
                   item.active ? (
                     <Pressable
@@ -217,6 +166,7 @@ export default function UserList() {
           );
         }}
       />
+
     </View>
   );
 }
