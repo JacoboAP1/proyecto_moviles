@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -8,30 +8,29 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { createPerfil, deletePerfil, getPerfiles, searchPerfiles, updatePerfil } from '../../api/perfiles';
+import { searchPerfiles, updatePerfil } from '../../api/perfiles';
+import { usePerfiles } from '../../hooks/usePerfiles';
 import type { Perfil } from '../../types';
-
+ 
 export default function TradeList() {
-  const [perfiles, setPerfiles] = useState<Perfil[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [nuevoOficio, setNuevoOficio] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    perfiles,
+    setPerfiles,
+    loading,
+    cargarTodos,
+    nuevoOficio,
+    setNuevoOficio,
+    submitting,
+    handleCrear,
+    handleEliminar,
+  } = usePerfiles();
+ 
   const [texto, setTexto] = useState('');
   const [buscando, setBuscando] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
-
-  const cargarTodos = async () => {
-    try {
-      setPerfiles(await getPerfiles());
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   const buscar = async () => {
     const q = texto.trim();
     if (!q) {
@@ -47,42 +46,17 @@ export default function TradeList() {
       setBuscando(false);
     }
   };
-
-  useEffect(() => { cargarTodos(); }, []);
-
-  const handleCrear = async () => {
-    const nombre = nuevoOficio.trim();
-    if (!nombre) {
-      Alert.alert('Error', 'Escribe el nombre del oficio');
-      return;
-    }
-    if (nombre.length > 100) {
-      Alert.alert('Error', 'Maximo 100 caracteres');
-      return;
-    }
-    setSubmitting(true);
-    try {
-      await createPerfil(nombre);
-      setNuevoOficio('');
-      await cargarTodos();
-      Alert.alert('Listo', `"${nombre}" fue agregado`);
-    } catch (error) {
-      Alert.alert('Error al crear', (error as Error).message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+ 
   const comenzarEdicion = (perfil: Perfil) => {
     setEditingId(perfil.id);
     setEditingName(perfil.oficio);
   };
-
+ 
   const cancelarEdicion = () => {
     setEditingId(null);
     setEditingName('');
   };
-
+ 
   const guardarEdicion = async (perfil: Perfil) => {
     const nombre = editingName.trim();
     if (!nombre) {
@@ -105,30 +79,7 @@ export default function TradeList() {
       setSaving(false);
     }
   };
-
-  const handleEliminar = (perfil: Perfil) => {
-    Alert.alert(
-      'Eliminar oficio',
-      `¿Seguro que quieres eliminar "${perfil.oficio}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deletePerfil(perfil.id);
-              await cargarTodos();
-              Alert.alert('Listo', `"${perfil.oficio}" fue eliminado`);
-            } catch (error) {
-              Alert.alert('No se pudo eliminar', (error as Error).message);
-            }
-          },
-        },
-      ],
-    );
-  };
-
+ 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -136,7 +87,7 @@ export default function TradeList() {
       </View>
     );
   }
-
+ 
   return (
     <View className="flex-1">
       <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
@@ -179,7 +130,7 @@ export default function TradeList() {
           </Pressable>
         </View>
       </View>
-
+ 
       <FlatList
         data={perfiles}
         keyExtractor={(item) => String(item.id)}
@@ -191,7 +142,7 @@ export default function TradeList() {
         }
         renderItem={({ item }) => {
           const editando = editingId === item.id;
-
+ 
           return (
             <View className="rounded-xl bg-white px-4 py-3">
               {editando ? (
