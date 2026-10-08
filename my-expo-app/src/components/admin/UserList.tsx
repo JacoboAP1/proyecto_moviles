@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import {
   ActivityIndicator,
   FlatList,
@@ -10,8 +10,9 @@ import {
 import { searchUsers } from '../../api/usuarios';
 import { useUsers } from '../../hooks/useUsers';
 import { useSearch } from '../../hooks/useSearch';
+import { useUserFilter } from '../../hooks/useUserFilter';
 import Badge from '../Badge';
- 
+
 export default function UserList() {
   const {
     usuarios,
@@ -22,16 +23,20 @@ export default function UserList() {
     handleReactivar,
     getRol,
   } = useUsers();
- 
-  const { texto, setTexto, buscando, buscar } = useSearch(searchUsers, setUsuarios, cargarTodos);
-  const [filtro, setFiltro] = useState<'todos' | 'activos' | 'inactivos'>('todos');
- 
-  const usuariosFiltrados = usuarios.filter((u) => {
-    if (filtro === 'activos') return u.active;
-    if (filtro === 'inactivos') return !u.active;
-    return true;
-  });
- 
+
+  const { texto, setTexto, buscando, buscar } = useSearch(
+    searchUsers,
+    setUsuarios,
+    cargarTodos,
+  );
+
+  const {
+    filtro,
+    setFiltro,
+    opciones,
+    usuariosFiltrados,
+  } = useUserFilter(usuarios);
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -39,7 +44,7 @@ export default function UserList() {
       </View>
     );
   }
- 
+
   return (
     <View className="flex-1">
       <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
@@ -53,6 +58,7 @@ export default function UserList() {
             returnKeyType="search"
             onSubmitEditing={buscar}
           />
+
           <Pressable
             onPress={buscar}
             disabled={buscando}
@@ -62,8 +68,10 @@ export default function UserList() {
             </Text>
           </Pressable>
         </View>
+
+        {/* Filtros de usuarios */}
         <View className="flex-row gap-2">
-          {(['todos', 'activos', 'inactivos'] as const).map((opcion) => (
+          {opciones.map((opcion) => (
             <Pressable
               key={opcion}
               onPress={() => setFiltro(opcion)}
@@ -74,7 +82,9 @@ export default function UserList() {
               }`}>
               <Text
                 className={`text-sm font-semibold ${
-                  filtro === opcion ? 'text-white' : 'text-neutral-600'
+                  filtro === opcion
+                    ? 'text-white'
+                    : 'text-neutral-600'
                 }`}>
                 {opcion.charAt(0).toUpperCase() + opcion.slice(1)}
               </Text>
@@ -82,61 +92,82 @@ export default function UserList() {
           ))}
         </View>
       </View>
- 
+
+      {/* Lista de usuarios */}
       <FlatList
         data={usuariosFiltrados}
         keyExtractor={(item) => String(item.id)}
         contentContainerClassName="px-4 py-3 gap-2"
         ListEmptyComponent={
           <Text className="py-8 text-center text-neutral-400">
-            {texto.trim() ? 'No hay usuarios que coincidan' : 'No hay usuarios registrados'}
+            {texto.trim()
+              ? 'No hay usuarios que coincidan'
+              : 'No hay usuarios registrados'}
           </Text>
         }
         renderItem={({ item }) => {
           const rol = getRol(item.roles);
           const isAdmin = item.roles[0]?.name === 'ROLE_ADMIN';
+
           return (
-            <View className={`rounded-xl bg-white px-4 py-3 ${!item.active ? 'opacity-50' : ''}`}>
+            <View
+              className={`rounded-xl bg-white px-4 py-3 ${
+                !item.active ? 'opacity-50' : ''
+              }`}>
               <View className="flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-oficiar-dark">
                   <Text className="text-lg font-bold text-white">
                     {item.username.charAt(0).toUpperCase()}
                   </Text>
                 </View>
+
                 <View className="flex-1">
-                  <Text className="font-semibold text-oficiar-very-dark" numberOfLines={1}>
+                  <Text
+                    className="font-semibold text-oficiar-very-dark"
+                    numberOfLines={1}>
                     {item.username}
                   </Text>
-                  <Text className="text-xs text-neutral-400" numberOfLines={1}>
+
+                  <Text
+                    className="text-xs text-neutral-400"
+                    numberOfLines={1}>
                     {item.email}
                   </Text>
                 </View>
+
                 <Badge text={rol.label} variant={rol.variant} />
               </View>
- 
+
               <View className="mt-2 flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
                   <Badge
                     text={item.active ? 'Activo' : 'Inactivo'}
                     variant={item.active ? 'green' : 'red'}
                   />
+
                   {item.telefono ? (
-                    <Text className="text-xs text-neutral-400">{item.telefono}</Text>
+                    <Text className="text-xs text-neutral-400">
+                      {item.telefono}
+                    </Text>
                   ) : null}
                 </View>
- 
+
                 {!isAdmin && (
                   item.active ? (
                     <Pressable
                       onPress={() => handleDesactivar(item)}
                       className="rounded-lg bg-red-50 px-3 py-1.5 active:opacity-80">
-                      <Text className="text-xs font-semibold text-red-600">Desactivar</Text>
+                      <Text className="text-xs font-semibold text-red-600">
+                        Desactivar
+                      </Text>
                     </Pressable>
                   ) : (
                     <Pressable
                       onPress={() => handleReactivar(item)}
                       className="rounded-lg bg-green-50 px-3 py-1.5 active:opacity-80">
-                      <Text className="text-xs font-semibold text-green-600">Reactivar</Text>
+                      <Text className="text-xs font-semibold text-green-600">
+                        Reactivar
+                      </Text>
                     </Pressable>
                   )
                 )}
