@@ -1,60 +1,69 @@
-import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Badge from '../components/Badge';
-import Button from '../components/Button';
 import Logo from '../components/Logo';
+import MenuButton from '../components/MenuButton';
 import TradeList from '../components/admin/TradeList';
 import UserList from '../components/admin/UserList';
 import RoleList from '../components/admin/RoleList';
 import { useSession } from '../session/context';
-import { useLogout } from '../hooks/useLogout';
 import { useAdminTabs } from '../hooks/useAdminTabs';
 
 export default function Admin() {
   const { user } = useSession();
-  const { logout } = useLogout();
   const { tab, setTab, tabs } = useAdminTabs();
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <View className="flex-1 bg-oficiar-gray">
-      <View className="items-center gap-1 bg-oficiar-very-dark px-6 pb-2 pt-12">
-        <Logo size="sm" light />
-        <Text className="text-lg font-bold text-white">
-          Hola, {user?.name}
-        </Text>
-        <Badge text="Administrador" variant="red" size="md" />
+      <View
+        className="gap-1 bg-oficiar-very-dark px-4 pb-3"
+        style={{ paddingTop: insets.top + 8 }}>
+        <View className="flex-row items-center">
+          <View className="w-10">
+            <MenuButton />
+          </View>
+          <View className="flex-1 items-center">
+            <Logo size="sm" light />
+          </View>
+          <View className="w-10" />
+        </View>
+        <View className="items-center gap-1">
+          <Text className="text-lg font-bold text-white">
+            Hola, {user?.name}
+          </Text>
+          <Badge text="Administrador" variant="red" size="md" />
+        </View>
       </View>
 
-      <View className="flex-row bg-oficiar-dark">
-        {tabs.map((t) => (
-          <Pressable
-            key={t.key}
-            onPress={() => setTab(t.key)}
-            className={`flex-1 items-center py-3 ${
-              tab === t.key ? 'border-b-2 border-oficiar-blue' : ''
-            }`}>
-            <Text
-              className={`text-sm font-semibold ${
-                tab === t.key ? 'text-oficiar-blue' : 'text-white/50'
-              }`}>
-              {t.label}
-            </Text>
-          </Pressable>
-        ))}
+      <View className="flex-1">
+        {tab === 'oficios' && <TradeList />}
+        {tab === 'usuarios' && <UserList />}
+        {tab === 'roles' && <RoleList />}
       </View>
 
-      {tab === 'oficios' && <TradeList />}
-      {tab === 'usuarios' && <UserList />}
-      {tab === 'roles' && <RoleList />}
-
-      <View className="flex-row gap-3 border-t border-neutral-200 bg-white px-6 py-3">
-        <View className="flex-1">
-          <Button text="Perfil" onPress={() => router.push('/profile')} variant="secondary" />
-        </View>
-        <View className="flex-1">
-          <Button text="Cerrar sesion" onPress={logout} variant="danger" />
-        </View>
+      <View
+        className="flex-row border-t border-neutral-200 bg-white"
+        style={{ paddingBottom: insets.bottom }}>
+        {tabs.map((t) => {
+          const activa = tab === t.key;
+          return (
+            <Pressable
+              key={t.key}
+              onPress={() => setTab(t.key)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: activa }}
+              className="flex-1 items-center pb-3 active:opacity-70">
+              <View
+                className={`mb-2 h-1 w-10 rounded-b-full ${activa ? 'bg-oficiar-blue' : 'bg-transparent'}`}
+              />
+              <Text
+                className={`text-sm font-semibold ${activa ? 'text-oficiar-blue' : 'text-neutral-400'}`}>
+                {t.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
