@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Badge from '../components/Badge';
 import Logo from '../components/Logo';
@@ -36,11 +36,13 @@ export default function Admin() {
         </View>
       </View>
 
-      <View className="flex-1">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         {tab === 'oficios' && <TradeList />}
         {tab === 'usuarios' && <UserList />}
         {tab === 'roles' && <RoleList />}
-      </View>
+      </KeyboardAvoidingView>
 
       <View
         className="flex-row border-t border-neutral-200 bg-white"

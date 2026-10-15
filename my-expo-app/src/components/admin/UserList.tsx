@@ -97,6 +97,7 @@ export default function UserList() {
       <FlatList
         data={usuariosFiltrados}
         keyExtractor={(item) => String(item.id)}
+        keyboardShouldPersistTaps="handled"
         contentContainerClassName="px-4 py-3 gap-2"
         ListEmptyComponent={
           <Text className="py-8 text-center text-neutral-400">
