@@ -1,9 +1,12 @@
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
+import DrawerMenu from '../../src/components/DrawerMenu';
 
 export default function OfficerLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-    </Stack>
+    <Drawer
+      drawerContent={(props) => <DrawerMenu {...props} />}
+      screenOptions={{ headerShown: false }}>
+      <Drawer.Screen name="index" />
+    </Drawer>
   );
 }

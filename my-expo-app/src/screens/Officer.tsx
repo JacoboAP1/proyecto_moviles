@@ -1,20 +1,28 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, Text, View, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Logo from '../components/Logo';
-import Button from '../components/Button';
+import MenuButton from '../components/MenuButton';
 import { useSession } from '../session/context';
-import { useLogout } from '../hooks/useLogout';
 
 export default function Officer() {
   const { user } = useSession();
-  const { logout } = useLogout();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <View className="flex-1 bg-oficiar-gray">
-      <View className="bg-oficiar-very-dark px-6 pb-3 pt-12">
+      <View className="bg-oficiar-very-dark px-4 pb-3" style={{ paddingTop: insets.top + 8 }}>
+        <View className="flex-row items-center">
+          <View className="w-10">
+            <MenuButton />
+          </View>
+          <View className="flex-1 items-center">
+            <Logo size="sm" light />
+          </View>
+          <View className="w-10" />
+        </View>
         <View className="items-center gap-1">
-          <Logo size="sm" light />
           <Text className="text-lg font-bold text-white">
             Hola, {user?.name}
           </Text>
@@ -36,7 +44,7 @@ export default function Officer() {
         </View>
       </View>
 
-      <ScrollView className="flex-1" contentContainerClassName="px-4 py-5 gap-5">
+      <ScrollView className="flex-1" contentContainerClassName="px-4 pt-5 pb-10 gap-5">
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
           Próximos{' '}
           <Text className="text-oficiar-blue">servicios</Text>
@@ -88,10 +96,6 @@ export default function Officer() {
               </View>
             ),
           )}
-        </View>
-
-        <View className="mt-2 pb-4">
-          <Button text="Cerrar sesión" onPress={logout} variant="secondary" />
         </View>
       </ScrollView>
     </View>
