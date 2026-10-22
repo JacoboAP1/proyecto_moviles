@@ -1,5 +1,5 @@
 import { useHeaderHeight } from 'expo-router/react-navigation';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View, Image, Pressable, ActivityIndicator } from 'react-native';
 import Button from '../components/Button';
 import Field from '../components/Field';
 import Logo from '../components/Logo';
@@ -10,7 +10,17 @@ import { useProfile } from '../hooks/useProfile';
 export default function Profile() {
   const { user } = useSession();
   const { logout } = useLogout();
-  const { control, loading, submit, isSubmitting } = useProfile();
+  const {
+    control,
+    loading,
+    fotoUrl,
+    uploadingFoto,
+    pickAndUploadImage,
+    removeImage,
+    submit,
+    isSubmitting,
+  } = useProfile();
+
   const headerHeight = useHeaderHeight();
 
   if (loading) return null;
@@ -24,15 +34,41 @@ export default function Profile() {
         className="flex-1"
         contentContainerClassName="pb-8"
         keyboardShouldPersistTaps="handled">
+
+        {/* Header con foto de perfil */}
         <View className="items-center gap-2 bg-oficiar-very-dark px-6 pb-5 pt-12">
           <Logo size="sm" light />
-          <View className="mt-2 h-20 w-20 items-center justify-center rounded-full bg-oficiar-blue">
-            <Text className="text-3xl font-bold text-white">
-              {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
-            </Text>
+
+          <View className="relative mt-2">
+            <Pressable 
+              onPress={pickAndUploadImage} 
+              disabled={uploadingFoto}
+              className="h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-oficiar-blue border-2 border-white">
+              {uploadingFoto ? (
+                <ActivityIndicator color="#ffffff" size="small" />
+              ) : fotoUrl ? (
+                <Image source={{ uri: fotoUrl }} className="h-full w-full" resizeMode="cover" />
+              ) : (
+                <Text className="text-3xl font-bold text-white">
+                  {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
+                </Text>
+              )}
+            </Pressable>
           </View>
-          <Text className="text-lg font-bold text-white">{user?.name}</Text>
-          <Text className="text-sm text-oficiar-blue">{user?.email}</Text>
+
+          {/* Botones rápidos de gestión de foto */}
+          <View className="flex-row gap-3 mt-1">
+            <Pressable onPress={pickAndUploadImage} disabled={uploadingFoto}>
+              <Text className="text-xs font-semibold text-oficiar-blue">
+                {fotoUrl ? 'Cambiar foto' : 'Subir foto'}
+              </Text>
+            </Pressable>
+            {fotoUrl && (
+              <Pressable onPress={removeImage} disabled={uploadingFoto}>
+                <Text className="text-xs font-semibold text-red-400">Eliminar</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
 
         <View className="gap-4 px-6 py-5">

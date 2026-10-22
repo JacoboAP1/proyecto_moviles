@@ -6,17 +6,22 @@ import com.proyecto_moviles.oficiar.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
 
     private final UsersRepository usersRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public UserService(UsersRepository usersRepository) {
+    public UserService(UsersRepository usersRepository, CloudinaryService cloudinaryService) {
         this.usersRepository = usersRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // READ: Obtener usuario por username (viene del token JWT)
@@ -84,5 +89,41 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<Users> searchUsers(String texto) {
         return usersRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(texto, texto);
+    }
+
+    // FOTO: Subir / Actualizar foto de perfil
+    @Transactional
+    public Users updateProfilePicture(String username, MultipartFile file) throws IOException {
+        Users user = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNoEncontradoException("Usuario no encontrado"));
+
+        // Si ya tenía foto previa en Cloudinary, la eliminamos primero
+        if (user.getFotoPublicId() != null && !user.getFotoPublicId().trim().isEmpty()) {
+            cloudinaryService.deleteFile(user.getFotoPublicId());
+        }
+
+        // Subimos la nueva foto a Cloudinary
+        Map<String, Object> uploadResult = cloudinaryService.uploadFile(file, "oficiar/perfiles");
+
+        user.setFotoUrl(uploadResult.get("secure_url").toString());
+        user.setFotoPublicId(uploadResult.get("public_id").toString());
+
+        return usersRepository.save(user);
+    }
+
+    // FOTO: Eliminar foto de perfil
+    @Transactional
+    public Users deleteProfilePicture(String username) throws IOException {
+        Users user = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNoEncontradoException("Usuario no encontrado"));
+
+        if (user.getFotoPublicId() != null && !user.getFotoPublicId().trim().isEmpty()) {
+            cloudinaryService.deleteFile(user.getFotoPublicId());
+        }
+
+        user.setFotoUrl(null);
+        user.setFotoPublicId(null);
+
+        return usersRepository.save(user);
     }
 }

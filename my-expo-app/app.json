@@ -12,7 +12,14 @@
     "scheme": "oficiar",
     "plugins": [
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "La aplicación requiere acceso a tus fotos para cambiar la imagen de perfil.",
+          "cameraPermission": "La aplicación requiere acceso a la cámara para tomar una foto de perfil."
+        }
+      ]
     ],
     "orientation": "portrait",
     "icon": "./assets/logo_oficiar.png",

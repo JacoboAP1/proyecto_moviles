@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,8 @@ public class UserController {
             "telefono", user.getTelefono() != null
                 ? user.getTelefono()
                 : "",
+            "fotoUrl", user.getFotoUrl() != null ? user.getFotoUrl() : "",
+            "fotoPublicId", user.getFotoPublicId() != null ? user.getFotoPublicId() : "",
             "roles", user.getRoles().stream()
                 .map(Role::getName)
                 .toList()
@@ -71,6 +75,8 @@ public class UserController {
             "telefono", user.getTelefono() != null
                 ? user.getTelefono()
                 : "",
+            "fotoUrl", user.getFotoUrl() != null ? user.getFotoUrl() : "",
+            "fotoPublicId", user.getFotoPublicId() != null ? user.getFotoPublicId() : "",
             "roles", roles,
             "access_token", newToken,
             "token_type", "Bearer"
@@ -101,5 +107,27 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Users>> searchUsers(@RequestParam String texto) {
         return ResponseEntity.ok(userService.searchUsers(texto));
+    }
+
+    // POST /api/usuarios/foto (Subir o cambiar foto de perfil)
+    @PostMapping("/foto")
+    public ResponseEntity<Map<String, Object>> subirFotoPerfil(
+            Authentication auth,
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        Users user = userService.updateProfilePicture(auth.getName(), file);
+
+        return ResponseEntity.ok(Map.of(
+                "fotoUrl", user.getFotoUrl(),
+                "fotoPublicId", user.getFotoPublicId(),
+                "message", "Foto de perfil actualizada correctamente"
+        ));
+    }
+
+    // DELETE /api/usuarios/foto (Eliminar foto de perfil)
+    @DeleteMapping("/foto")
+    public ResponseEntity<Map<String, String>> eliminarFotoPerfil(Authentication auth) throws IOException {
+        userService.deleteProfilePicture(auth.getName());
+        return ResponseEntity.ok(Map.of("message", "Foto de perfil eliminada correctamente"));
     }
 }

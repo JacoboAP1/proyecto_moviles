@@ -53,6 +53,12 @@ public class Users implements UserDetails {
     )
     private Set<Perfil> perfiles = new HashSet<>();
 
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
+
+    @Column(name = "foto_public_id", length = 255)
+    private String fotoPublicId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Al tener los nombres guardados como "ROLE_CLIENT" en BD, retornamos directo el nombre
