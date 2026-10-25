@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import com.proyecto_moviles.oficiar.exceptions.SolicitudExceptions.*;
 
 import java.util.Map;
 
@@ -136,6 +137,36 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
                         "error", "Error al eliminar el rol",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(AccionNoPermitidaException.class)
+    public ResponseEntity<Map<String, Object>> handleAccionNoPermitida(AccionNoPermitidaException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(Map.of(
+                        "error", "Acción no permitida para tu rol",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(EstadoInvalidoException.class)
+    public ResponseEntity<Map<String, Object>> handleEstadoInvalido(EstadoInvalidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", "Estado de la solicitud no válido",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(SolicitudNoEncontradaException.class)
+    public ResponseEntity<Map<String, Object>> handleSolicitudNoEncontrada(SolicitudNoEncontradaException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "Solicitud no encontrada",
                         "message", ex.getMessage()
                 ));
     }
