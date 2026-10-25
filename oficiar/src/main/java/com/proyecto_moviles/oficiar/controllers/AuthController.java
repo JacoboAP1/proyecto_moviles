@@ -5,7 +5,7 @@ import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioInvalidoEx
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolNoPermitidoException;
 import com.proyecto_moviles.oficiar.exceptions.UserExceptions.*;
-import com.proyecto_moviles.oficiar.models.dto.RegisterRequest;
+import com.proyecto_moviles.oficiar.models.dto.Register.RegisterRequest;
 import com.proyecto_moviles.oficiar.models.entities.Perfil;
 import com.proyecto_moviles.oficiar.models.entities.Role;
 import com.proyecto_moviles.oficiar.models.entities.Users;

@@ -1,7 +1,6 @@
 package com.proyecto_moviles.oficiar.controllers;
 
 import com.proyecto_moviles.oficiar.auth.JwtService;
-import com.proyecto_moviles.oficiar.models.entities.Perfil;
 import com.proyecto_moviles.oficiar.models.entities.Role;
 import com.proyecto_moviles.oficiar.models.entities.Users;
 import com.proyecto_moviles.oficiar.services.UserService;
@@ -11,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.TrabajadorResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -107,6 +107,14 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Users>> searchUsers(@RequestParam String texto) {
         return ResponseEntity.ok(userService.searchUsers(texto));
+    }
+
+    // GET /api/usuarios/trabajadores?texto=vic&perfilId=1 (Officers para la Vista 1, cualquier usuario con sesión)
+    @GetMapping("/trabajadores")
+    public ResponseEntity<List<TrabajadorResponse>> buscarTrabajadores(
+            @RequestParam(required = false) String texto,
+            @RequestParam(required = false) Long perfilId) {
+        return ResponseEntity.ok(userService.buscarTrabajadores(texto, perfilId));
     }
 
     // POST /api/usuarios/foto (Subir o cambiar foto de perfil)

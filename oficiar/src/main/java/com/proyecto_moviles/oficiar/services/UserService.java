@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.TrabajadorResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -125,5 +126,14 @@ public class UserService {
         user.setFotoPublicId(null);
 
         return usersRepository.save(user);
+    }
+
+    // TRABAJADORES: Officers activos para la Vista 1, con búsqueda por nombre y filtro por oficio
+    @Transactional(readOnly = true)
+    public List<TrabajadorResponse> buscarTrabajadores(String texto, Long perfilId) {
+        String filtro = (texto == null || texto.isBlank()) ? null : texto.trim();
+        return usersRepository.buscarTrabajadores(filtro, perfilId).stream()
+                .map(TrabajadorResponse::from)
+                .toList();
     }
 }
