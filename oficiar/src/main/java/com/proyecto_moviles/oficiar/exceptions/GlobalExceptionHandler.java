@@ -5,6 +5,7 @@ import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioInvalidoEx
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolAsignadoException;
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolNoPermitidoException;
+import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolProtegidoException;
 import com.proyecto_moviles.oficiar.exceptions.UserExceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,6 +138,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
                         "error", "Error al eliminar el rol",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(RolProtegidoException.class)
+    public ResponseEntity<Map<String, Object>> handleRolProtegido(RolProtegidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(Map.of(
+                        "error", "Rol base protegido",
                         "message", ex.getMessage()
                 ));
     }

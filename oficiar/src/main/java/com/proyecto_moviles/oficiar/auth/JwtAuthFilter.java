@@ -1,5 +1,6 @@
 package com.proyecto_moviles.oficiar.auth;
 
+import com.proyecto_moviles.oficiar.repositories.UsersRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,11 +29,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     /**
+     * Repositorio de usuarios, para comprobar que el dueño del token siga activo.
+     */
+    private final UsersRepository usersRepository;
+
+    /**
      * Constructor que inyecta el servicio JWT.
      * @param jwtService servicio para parsear y validar tokens
+     * @param usersRepository repositorio para verificar que el usuario siga activo
      */
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, UsersRepository usersRepository) {
         this.jwtService = jwtService;
+        this.usersRepository = usersRepository;
     }
 
     /**
@@ -61,6 +69,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // Parsea y valida el token
             io.jsonwebtoken.Claims claims = jwtService.parse(token);
             String username = claims.getSubject();
+
+            // Un token vigente no basta: si el admin desactivó al usuario (o ya no existe), se corta aquí con 401
+            boolean activo = usersRepository.findByUsername(username)
+                    .map(u -> Boolean.TRUE.equals(u.getActive()))
+                    .orElse(false);
+            if (!activo) {
+                SecurityContextHolder.clearContext();
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                res.setContentType("application/json;charset=UTF-8");
+                res.getWriter().write(
+                        "{\"error\":\"Usuario desactivado\",\"message\":\"Tu cuenta fue desactivada. Contacta a soporte.\"}");
+                return;
+            }
 
             @SuppressWarnings("unchecked")
             List<String> roles = (List<String>) claims.get("roles");

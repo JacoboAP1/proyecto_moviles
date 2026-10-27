@@ -1,6 +1,7 @@
 package com.proyecto_moviles.oficiar.services;
 
 import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolAsignadoException;
+import com.proyecto_moviles.oficiar.exceptions.RoleExceptions.RolProtegidoException;
 import com.proyecto_moviles.oficiar.models.entities.Role;
 import com.proyecto_moviles.oficiar.repositories.RoleRepository;
 import com.proyecto_moviles.oficiar.repositories.UsersRepository;
@@ -11,9 +12,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RoleService {
+
+    // Roles base del sistema: no se pueden renombrar ni eliminar, tengan o no usuarios
+    private static final Set<String> ROLES_BASE = Set.of("ROLE_ADMIN", "ROLE_WORKER", "ROLE_CLIENT");
 
     private final RoleRepository roleRepository;
     private final UsersRepository usersRepository;
@@ -77,6 +82,10 @@ public class RoleService {
                         "Rol no encontrado"
                 ));
 
+        if (ROLES_BASE.contains(existingRole.getName())) {
+            throw new RolProtegidoException("El rol " + existingRole.getName() + " es un rol base del sistema y no se puede renombrar");
+        }
+
         boolean roleAssigned = usersRepository.existsByRoles_Id(id);
 
         if (roleAssigned) {
@@ -122,6 +131,10 @@ public class RoleService {
                         HttpStatus.NOT_FOUND,
                         "Rol no encontrado"
                 ));
+
+        if (ROLES_BASE.contains(role.getName())) {
+            throw new RolProtegidoException("El rol " + role.getName() + " es un rol base del sistema y no se puede eliminar");
+        }
 
         boolean roleAssigned =
                 usersRepository.existsByRoles_Id(id);
