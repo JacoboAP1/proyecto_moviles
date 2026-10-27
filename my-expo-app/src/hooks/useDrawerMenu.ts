@@ -23,13 +23,21 @@ export function useDrawerMenu(cerrarMenu?: () => void) {
     router.push('/profile');
   };
 
+  const irASolicitudes = () => {
+    cerrarMenu?.();
+    router.push('/solicitudes');
+  };
+
   return {
     nombre: user?.name ?? '',
     email: user?.email ?? '',
     inicial: user?.name?.charAt(0).toUpperCase() ?? '?',
     rol: user ? ROL_LABEL[user.roles[0]] : '',
+    // El admin no tiene solicitudes
+    verSolicitudes: !!user && !user.roles.includes('ROLE_ADMIN'),
     abrirMenu,
     irAPerfil,
+    irASolicitudes,
     cerrarSesion: logout,
   };
 }

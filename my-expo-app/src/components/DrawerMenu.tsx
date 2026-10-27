@@ -4,9 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDrawerMenu } from '../hooks/useDrawerMenu';
 
 export default function DrawerMenu({ navigation }: DrawerContentComponentProps) {
-  const { nombre, email, inicial, rol, irAPerfil, cerrarSesion } = useDrawerMenu(() =>
-    navigation.closeDrawer(),
-  );
+  const { nombre, email, inicial, rol, verSolicitudes, irAPerfil, irASolicitudes, cerrarSesion } =
+    useDrawerMenu(() => navigation.closeDrawer());
   const insets = useSafeAreaInsets();
 
   return (
@@ -26,6 +25,11 @@ export default function DrawerMenu({ navigation }: DrawerContentComponentProps) 
         <Pressable onPress={irAPerfil} className="rounded-lg px-3 py-3 active:bg-neutral-100">
           <Text className="font-semibold text-oficiar-very-dark">Mi perfil</Text>
         </Pressable>
+        {verSolicitudes && (
+          <Pressable onPress={irASolicitudes} className="rounded-lg px-3 py-3 active:bg-neutral-100">
+            <Text className="font-semibold text-oficiar-very-dark">Solicitudes</Text>
+          </Pressable>
+        )}
       </View>
 
       <View

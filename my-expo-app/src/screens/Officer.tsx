@@ -35,7 +35,7 @@ export default function Officer() {
           <Pressable className="rounded-lg bg-oficiar-blue px-4 py-2">
             <Text className="text-sm font-semibold text-white">Inicio</Text>
           </Pressable>
-          <Pressable className="rounded-lg px-4 py-2" onPress={() => {}}>
+          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/solicitudes')}>
             <Text className="text-sm text-white/70">Solicitudes</Text>
           </Pressable>
           <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/profile')}>

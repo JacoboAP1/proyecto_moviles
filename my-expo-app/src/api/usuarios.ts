@@ -1,3 +1,4 @@
+import type { Trabajador } from '../types';
 import { request } from './client';
 
 export interface UsuarioAdmin {
@@ -23,4 +24,13 @@ export async function softDeleteUser(id: number): Promise<{ message: string }> {
 
 export async function reactivateUser(id: number): Promise<{ message: string }> {
   return request<{ message: string }>(`/api/usuarios/reactivar/${id}`, undefined, 'PUT');
+}
+
+// Officers activos, filtrados por oficio y buscados por nombre (los dos son opcionales)
+export async function getTrabajadores(perfilId?: number, texto?: string): Promise<Trabajador[]> {
+  const params = [
+    perfilId ? `perfilId=${perfilId}` : null,
+    texto?.trim() ? `texto=${encodeURIComponent(texto.trim())}` : null,
+  ].filter(Boolean);
+  return request<Trabajador[]>(`/api/usuarios/trabajadores${params.length ? `?${params.join('&')}` : ''}`);
 }

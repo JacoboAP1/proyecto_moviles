@@ -51,8 +51,8 @@ export default function Client() {
           <Pressable className="rounded-lg bg-oficiar-blue px-4 py-2">
             <Text className="text-sm font-semibold text-white">Inicio</Text>
           </Pressable>
-          <Pressable className="rounded-lg px-4 py-2" onPress={() => {}}>
-            <Text className="text-sm text-white/70">Servicios</Text>
+          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/solicitudes')}>
+            <Text className="text-sm text-white/70">Solicitudes</Text>
           </Pressable>
           <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/profile')}>
             <Text className="text-sm text-white/70">Perfil</Text>
@@ -80,7 +80,7 @@ export default function Client() {
 
         <Button
           text="Solicitar un servicio"
-          onPress={() => {}}
+          onPress={() => router.push('/solicitar')}
         />
 
         <Text className="text-xl font-extrabold text-oficiar-very-dark">

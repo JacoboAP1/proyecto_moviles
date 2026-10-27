@@ -29,6 +29,9 @@ function Navigator() {
         <Stack.Screen name="client" options={{ headerShown: false }} />
         <Stack.Screen name="officer" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Perfil' }} />
+        <Stack.Screen name="solicitar" options={{ title: 'Solicitar servicio' }} />
+        <Stack.Screen name="elegir-officer" options={{ title: 'Elegir officer' }} />
+        <Stack.Screen name="solicitudes" options={{ title: 'Solicitudes' }} />
       </Stack.Protected>
 
       {/* 3. Rutas solo para usuarios NO AUTENTICADOS */}
