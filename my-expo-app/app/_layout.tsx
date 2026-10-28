@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import '../global.css';
 import { SessionProvider, useSession } from '../src/session/context';
+import { neutro, oficiar } from '../src/theme/tokens';
 
 export default function RootLayout() {
   return (
@@ -16,8 +17,8 @@ function Navigator() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#051A26' },
-        headerTintColor: '#ffffff',
+        headerStyle: { backgroundColor: oficiar['very-dark'] },
+        headerTintColor: neutro.white,
         headerTitleStyle: { fontWeight: '600' },
       }}>
       {/* 1. La ruta index DEBE estar fuera del guard para resolver el inicio de la app */}

@@ -5,10 +5,11 @@ import Button from './Button';
 interface Props {
   trabajador: Trabajador;
   onPress: () => void;
+  enviando?: boolean; // bloquea el botón mientras se crea la solicitud
 }
 
 // Tarjeta Bento de un officer (Vista 2)
-export default function OfficerCard({ trabajador, onPress }: Props) {
+export default function OfficerCard({ trabajador, onPress, enviando }: Props) {
   const oficios = trabajador.oficios.map((o) => o.oficio).join(' · ');
 
   return (
@@ -35,7 +36,7 @@ export default function OfficerCard({ trabajador, onPress }: Props) {
         </View>
       </View>
 
-      <Button text="Solicitar servicio" onPress={onPress} />
+      <Button text={enviando ? 'Enviando…' : 'Solicitar servicio'} onPress={onPress} disabled={enviando} />
     </View>
   );
 }
