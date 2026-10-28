@@ -1,3 +1,5 @@
+const tokens = require('./src/theme/tokens');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./app/**/*.{js,ts,tsx}', './src/**/*.{js,ts,tsx}'],
@@ -5,16 +7,17 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      // Todos los valores vienen de src/theme/tokens.js
       colors: {
-        oficiar: {
-          'very-dark': '#051A26',
-          dark: '#0B3954',
-          blue: '#3D80B7',
-          'blue-btn': '#0077B5',
-          yellow: '#FFC107',
-          gray: '#EDEDED',
-        },
+        oficiar: tokens.oficiar,
+        neutro: tokens.neutro,
+        peligro: tokens.peligro,
       },
+      borderRadius: tokens.radio,
+      spacing: tokens.espacio,
+      fontSize: tokens.texto,
+      minHeight: tokens.toque,
+      minWidth: tokens.toque,
     },
   },
   plugins: [],

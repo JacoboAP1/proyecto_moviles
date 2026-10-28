@@ -13,16 +13,16 @@ interface Props {
 
 const bg: Record<Variant, string> = {
   primary: 'bg-oficiar-blue-btn',
-  secondary: 'border border-neutral-300',
+  secondary: 'border border-oficiar-dark/20 bg-white',
   yellow: 'bg-oficiar-yellow',
-  danger: 'bg-red-50',
+  danger: 'bg-peligro-suave',
 };
 
 const fg: Record<Variant, string> = {
   primary: 'text-white',
-  secondary: 'text-neutral-700',
+  secondary: 'text-oficiar-very-dark',
   yellow: 'text-oficiar-very-dark',
-  danger: 'text-red-600',
+  danger: 'text-peligro',
 };
 
 export default function Button({ text, onPress, disabled, secondary, variant, className }: Props) {
@@ -32,8 +32,10 @@ export default function Button({ text, onPress, disabled, secondary, variant, cl
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className={`items-center rounded-xl p-4 active:opacity-80 disabled:opacity-50 ${bg[v]} ${className ?? ''}`}>
-      <Text className={`font-semibold ${fg[v]}`}>
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      className={`min-h-toque items-center justify-center rounded-boton px-bento-in active:opacity-80 disabled:opacity-50 ${bg[v]} ${className ?? ''}`}>
+      <Text className={`text-bento-body font-semibold ${fg[v]}`}>
         {text}
       </Text>
     </Pressable>

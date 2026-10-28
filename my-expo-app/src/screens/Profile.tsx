@@ -6,6 +6,7 @@ import Logo from '../components/Logo';
 import { useSession } from '../session/context';
 import { useLogout } from '../hooks/useLogout';
 import { useProfile } from '../hooks/useProfile';
+import { neutro } from '../theme/tokens';
 
 export default function Profile() {
   const { user } = useSession();
@@ -45,7 +46,7 @@ export default function Profile() {
               disabled={uploadingFoto}
               className="h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-oficiar-blue border-2 border-white">
               {uploadingFoto ? (
-                <ActivityIndicator color="#ffffff" size="small" />
+                <ActivityIndicator color={neutro.white} size="small" />
               ) : fotoUrl ? (
                 <Image source={{ uri: fotoUrl }} className="h-full w-full" resizeMode="cover" />
               ) : (

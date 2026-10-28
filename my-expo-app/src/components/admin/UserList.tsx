@@ -11,6 +11,7 @@ import { searchUsers } from '../../api/usuarios';
 import { useUsers } from '../../hooks/useUsers';
 import { useSearch } from '../../hooks/useSearch';
 import { useUserFilter } from '../../hooks/useUserFilter';
+import { neutro, oficiar } from '../../theme/tokens';
 import Badge from '../Badge';
 
 export default function UserList() {
@@ -40,7 +41,7 @@ export default function UserList() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color="#3D80B7" />
+        <ActivityIndicator color={oficiar.blue} />
       </View>
     );
   }
@@ -52,7 +53,7 @@ export default function UserList() {
           <TextInput
             className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
             placeholder="Buscar por nombre o email..."
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={neutro.placeholder}
             value={texto}
             onChangeText={setTexto}
             returnKeyType="search"

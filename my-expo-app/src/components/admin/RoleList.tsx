@@ -11,6 +11,7 @@ import { searchRoles } from '../../api/roles';
 import { useRoles } from '../../hooks/useRoles';
 import { useSearch } from '../../hooks/useSearch';
 import { useUpdateRole } from '../../hooks/useUpdateRole';
+import { neutro, oficiar } from '../../theme/tokens';
 
 export default function RoleList() {
   const {
@@ -50,7 +51,7 @@ export default function RoleList() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color="#3D80B7" />
+        <ActivityIndicator color={oficiar.blue} />
       </View>
     );
   }
@@ -63,7 +64,7 @@ export default function RoleList() {
           <TextInput
             className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
             placeholder="Nuevo rol (ej: Supervisor)"
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={neutro.placeholder}
             value={nuevoRol}
             onChangeText={setNuevoRol}
             maxLength={50}
@@ -87,7 +88,7 @@ export default function RoleList() {
           <TextInput
             className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
             placeholder="Buscar rol..."
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={neutro.placeholder}
             value={texto}
             onChangeText={setTexto}
             returnKeyType="search"
@@ -126,7 +127,7 @@ export default function RoleList() {
                   <TextInput
                     className="rounded-lg border border-neutral-300 px-3 py-2"
                     placeholder="Nombre del rol"
-                    placeholderTextColor="#a3a3a3"
+                    placeholderTextColor={neutro.placeholder}
                     value={editingName}
                     onChangeText={setEditingName}
                     maxLength={50}

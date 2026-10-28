@@ -23,8 +23,8 @@ export default function ChipSelect({ label, items, selected, onChange, error }: 
   };
 
   return (
-    <View className="gap-1">
-      <Text className="font-semibold">{label}</Text>
+    <View className="gap-2">
+      <Text className="text-bento-body font-semibold text-oficiar-very-dark">{label}</Text>
       <View className="flex-row flex-wrap gap-2">
         {items.map((item) => {
           const active = selected.includes(item.id);
@@ -32,17 +32,20 @@ export default function ChipSelect({ label, items, selected, onChange, error }: 
             <Pressable
               key={item.id}
               onPress={() => toggle(item.id)}
-              className={`rounded-full px-4 py-2 ${
-                active ? 'bg-blue-600' : 'border border-neutral-300 bg-white'
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              className={`min-h-toque justify-center rounded-full px-bento-in active:opacity-80 ${
+                active ? 'bg-oficiar-blue-btn' : 'border border-oficiar-dark/20 bg-white'
               }`}>
-              <Text className={`text-sm ${active ? 'font-semibold text-white' : 'text-neutral-700'}`}>
+              <Text
+                className={`text-bento-body ${active ? 'font-semibold text-white' : 'text-oficiar-very-dark'}`}>
                 {item.label}
               </Text>
             </Pressable>
           );
         })}
       </View>
-      {!!error && <Text className="text-xs text-red-600">{error}</Text>}
+      {!!error && <Text className="text-bento-label text-peligro">{error}</Text>}
     </View>
   );
 }
