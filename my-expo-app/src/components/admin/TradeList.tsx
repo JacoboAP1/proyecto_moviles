@@ -11,6 +11,7 @@ import { searchPerfiles } from '../../api/perfiles';
 import { usePerfiles } from '../../hooks/usePerfiles';
 import { useSearch } from '../../hooks/useSearch';
 import { useUpdatePerfil } from '../../hooks/useUpdatePerfil';
+import { neutro, oficiar } from '../../theme/tokens';
 
 export default function TradeList() {
   const {
@@ -40,7 +41,7 @@ export default function TradeList() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color="#3D80B7" />
+        <ActivityIndicator color={oficiar.blue} />
       </View>
     );
   }
@@ -52,7 +53,7 @@ export default function TradeList() {
           <TextInput
             className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
             placeholder="Nuevo oficio (ej: Soldador)"
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={neutro.placeholder}
             value={nuevoOficio}
             onChangeText={setNuevoOficio}
             maxLength={100}
@@ -72,7 +73,7 @@ export default function TradeList() {
           <TextInput
             className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
             placeholder="Buscar oficio..."
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={neutro.placeholder}
             value={texto}
             onChangeText={setTexto}
             returnKeyType="search"
@@ -109,7 +110,7 @@ export default function TradeList() {
                   <TextInput
                     className="rounded-lg border border-neutral-300 px-3 py-2"
                     placeholder="Nombre del oficio"
-                    placeholderTextColor="#a3a3a3"
+                    placeholderTextColor={neutro.placeholder}
                     value={editingName}
                     onChangeText={setEditingName}
                     maxLength={100}
