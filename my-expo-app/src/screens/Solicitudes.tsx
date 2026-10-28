@@ -1,5 +1,4 @@
-
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +9,9 @@ import {
 } from 'react-native';
 import type { AccionSolicitud } from '../api/solicitudes';
 import Button from '../components/Button';
+import SolicitudCard from '../components/SolicitudCard';
 import { useSolicitudes } from '../hooks/useSolicitudes';
+import { neutro } from '../theme/tokens';
 import type { Solicitud } from '../types';
 
 // Vista 3: la misma pantalla para cliente y officer; los botones cambian según rol y estado
@@ -38,8 +39,8 @@ export default function Solicitudes() {
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center gap-4 bg-oficiar-gray p-6">
-        <Text className="text-center text-oficiar-dark">{error}</Text>
+      <View className="flex-1 items-center justify-center gap-bento bg-oficiar-gray p-bento-in">
+        <Text className="text-center text-bento-body text-oficiar-dark">{error}</Text>
         <Button
           text="Reintentar"
           variant="secondary"
@@ -54,19 +55,19 @@ export default function Solicitudes() {
       className="flex-1 bg-oficiar-gray"
       data={solicitudes}
       keyExtractor={(s) => String(s.id)}
-      contentContainerClassName="gap-3 p-4 pb-10"
+      contentContainerClassName="gap-bento p-bento-in pb-10"
       refreshing={refreshing}
       onRefresh={recargar}
       keyboardShouldPersistTaps="handled"
       ListEmptyComponent={
-        <Text className="mt-10 text-center text-neutral-500">
+        <Text className="mt-10 text-center text-bento-body text-oficiar-dark">
           {esOfficer
             ? 'Todavía no te han llegado solicitudes.'
             : 'Todavía no has hecho solicitudes. Pide un servicio desde el inicio.'}
         </Text>
       }
       renderItem={({ item }) => (
-        <TarjetaProvisional solicitud={item} esOfficer={esOfficer}>
+        <SolicitudCard solicitud={item} esOfficer={esOfficer}>
           <Acciones
             solicitud={item}
             esOfficer={esOfficer}
@@ -74,7 +75,7 @@ export default function Solicitudes() {
             cotizar={cotizar}
             cambiarEstado={cambiarEstado}
           />
-        </TarjetaProvisional>
+        </SolicitudCard>
       )}
     />
   );
@@ -121,8 +122,9 @@ function Acciones({
       return (
         <View className="gap-2">
           <TextInput
-            className="rounded-lg border border-neutral-300 px-3 py-3"
+            className="min-h-toque rounded-bento-sm border border-oficiar-dark/20 px-bento-in text-bento-body text-oficiar-very-dark"
             placeholder="Precio del servicio (ej: 50000)"
+            placeholderTextColor={neutro.placeholder}
             keyboardType="number-pad"
             value={precio}
             onChangeText={(t) => setPrecio(t.replace(/[^0-9]/g, ''))}
@@ -222,54 +224,5 @@ function Acciones({
 }
 
 function Aviso({ texto }: { texto: string }) {
-  return <Text className="text-sm text-neutral-500">{texto}</Text>;
-}
-
-// PROVISIONAL: cuando Triana suba SolicitudCard, se reemplaza por
-// <SolicitudCard solicitud={item} esOfficer={esOfficer}> ...Acciones... </SolicitudCard>
-// y se borra esta función.
-function TarjetaProvisional({
-  solicitud,
-  esOfficer,
-  children,
-}: {
-  solicitud: Solicitud;
-  esOfficer: boolean;
-  children?: ReactNode;
-}) {
-  const persona = esOfficer
-    ? solicitud.clienteNombre
-    : solicitud.officerNombre;
-
-  const precio =
-    solicitud.precioAcordado != null
-      ? `$${solicitud.precioAcordado.toLocaleString('es-CO')}`
-      : 'Por cotizar';
-
-  return (
-    <View className="gap-2 rounded-2xl bg-white p-4">
-      <View className="flex-row items-center justify-between gap-2">
-        <Text className="flex-1 text-lg font-bold text-oficiar-very-dark">
-          {solicitud.oficio}
-        </Text>
-        <Text className="font-semibold text-oficiar-blue-btn">
-          {solicitud.estado}
-        </Text>
-      </View>
-
-      <Text className="text-oficiar-dark">{solicitud.descripcion}</Text>
-
-      <Text className="text-sm text-neutral-500">
-        {esOfficer ? 'Cliente' : 'Officer'}: {persona} · Precio: {precio}
-      </Text>
-
-      {!!solicitud.direccion && (
-        <Text className="text-sm text-neutral-500">
-          Dirección: {solicitud.direccion}
-        </Text>
-      )}
-
-      {children}
-    </View>
-  );
+  return <Text className="text-bento-label text-oficiar-dark">{texto}</Text>;
 }
