@@ -3,11 +3,13 @@ import { useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { getMyProfile, updateProfile, uploadProfilePicture, deleteProfilePicture } from '../api/user';
 import { useAlerta } from '../session/alerta';
+import { useSession } from '../session/context';
 
 type PerfilForm = { username: string; telefono: string };
 
 export function useProfile() {
   const { avisar, confirmar, procesar } = useAlerta();
+  const { actualizarUsuario } = useSession();
   const [loading, setLoading] = useState(true);
   const [fotoUrl, setFotoUrl] = useState<string | null>(null);
   const [uploadingFoto, setUploadingFoto] = useState(false);
@@ -63,6 +65,7 @@ export function useProfile() {
         try {
           const response = await uploadProfilePicture(uri);
           setFotoUrl(response.fotoUrl);
+          actualizarUsuario({ fotoUrl: response.fotoUrl });
           return { titulo: 'Listo', mensaje: 'Foto de perfil actualizada correctamente' };
         } finally {
           setUploadingFoto(false);
@@ -85,6 +88,7 @@ export function useProfile() {
         try {
           await deleteProfilePicture();
           setFotoUrl(null);
+          actualizarUsuario({ fotoUrl: null });
           return { titulo: 'Listo', mensaje: 'Foto de perfil eliminada' };
         } finally {
           setUploadingFoto(false);
@@ -106,8 +110,9 @@ export function useProfile() {
     }
 
     try {
-      await updateProfile(changes);
+      const actualizado = await updateProfile(changes);
       reset(data);
+      actualizarUsuario({ name: actualizado.username, telefono: actualizado.telefono });
       avisar({ tipo: 'exito', titulo: 'Listo', mensaje: 'Perfil actualizado' });
     } catch (error: any) {
       avisar({ tipo: 'error', titulo: 'No se pudo guardar', mensaje: error.message });

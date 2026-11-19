@@ -43,6 +43,7 @@ export default function Solicitudes() {
         <Text className="text-center text-bento-body text-oficiar-dark">{error}</Text>
         <Button
           text="Reintentar"
+          icono="refresh"
           variant="secondary"
           onPress={reintentar}
         />
@@ -122,11 +123,12 @@ function Acciones({
           />
           <Button
             text="Cotizar"
+            icono="pricetag-outline"
             onPress={() => cotizar(id, Number(precio))}
             disabled={!precio}
           />
           <Button
-            text="Rechazar"
+            text="Rechazar" icono="close-circle-outline"
             variant="danger"
             onPress={() => confirmar('rechazar')}
           />
@@ -142,6 +144,7 @@ function Acciones({
       return (
         <Button
           text="Iniciar trabajo"
+          icono="play-outline"
           onPress={() => cambiarEstado(id, 'iniciar')}
         />
       );
@@ -160,7 +163,7 @@ function Acciones({
       <View className="gap-2">
         <Aviso texto="Esperando la cotización del officer." />
         <Button
-          text="Cancelar"
+          text="Cancelar" icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
@@ -173,15 +176,16 @@ function Acciones({
       <View className="gap-2">
         <Button
           text="Aceptar precio"
+          icono="checkmark-circle-outline"
           onPress={() => cambiarEstado(id, 'aceptar')}
         />
         <Button
-          text="Rechazar"
+          text="Rechazar" icono="close-circle-outline"
           variant="danger"
           onPress={() => confirmar('rechazar')}
         />
         <Button
-          text="Cancelar"
+          text="Cancelar" icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
@@ -194,7 +198,7 @@ function Acciones({
       <View className="gap-2">
         <Aviso texto="Esperando que el officer inicie el trabajo." />
         <Button
-          text="Cancelar"
+          text="Cancelar" icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
@@ -206,6 +210,7 @@ function Acciones({
     return (
       <Button
         text="Finalizar"
+        icono="flag-outline"
         onPress={() => cambiarEstado(id, 'finalizar')}
       />
     );

@@ -49,7 +49,7 @@ export default function ElegirOfficer() {
       ) : error ? (
         <View className="flex-1 items-center justify-center gap-bento p-bento-in">
           <Text className="text-center text-bento-body text-oficiar-dark">{error}</Text>
-          <Button text="Reintentar" variant="secondary" onPress={reintentar} />
+          <Button text="Reintentar" icono="refresh" variant="secondary" onPress={reintentar} />
         </View>
       ) : (
         <FlatList

@@ -131,6 +131,7 @@ export default function RegisterScreen() {
   
         <Button
           text={isSubmitting ? 'Creando…' : 'Crear cuenta'}
+          icono="checkmark-circle-outline"
           onPress={submit}
           disabled={isSubmitting}
         />

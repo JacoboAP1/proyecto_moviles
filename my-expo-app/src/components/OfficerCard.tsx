@@ -36,7 +36,7 @@ export default function OfficerCard({ trabajador, onPress, enviando }: Props) {
         </View>
       </View>
 
-      <Button text={enviando ? 'Enviando…' : 'Solicitar servicio'} onPress={onPress} disabled={enviando} />
+      <Button text={enviando ? 'Enviando…' : 'Solicitar servicio'} icono="send-outline" onPress={onPress} disabled={enviando} />
     </View>
   );
 }

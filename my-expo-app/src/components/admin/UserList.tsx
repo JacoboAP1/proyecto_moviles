@@ -62,7 +62,7 @@ export default function UserList() {
             onSubmitEditing={buscar}
           />
 
-          <Button text="Buscar" variant="secondary" onPress={buscar} cargando={buscando} />
+          <Button text="Buscar" icono="search" variant="secondary" onPress={buscar} cargando={buscando} />
         </View>
 
         {/* Filtros de usuarios */}
@@ -155,6 +155,7 @@ export default function UserList() {
                 item.active ? (
                   <Button
                     text="Desactivar"
+                    icono="person-remove-outline"
                     variant="danger"
                     accessibilityLabel={`Desactivar a ${item.username}`}
                     onPress={() => handleDesactivar(item)}
@@ -162,6 +163,7 @@ export default function UserList() {
                 ) : (
                   <Button
                     text="Reactivar"
+                    icono="person-add-outline"
                     accessibilityLabel={`Reactivar a ${item.username}`}
                     onPress={() => handleReactivar(item)}
                   />

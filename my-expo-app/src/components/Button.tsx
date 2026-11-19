@@ -1,5 +1,6 @@
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 import { neutro, oficiar, peligro } from '../theme/tokens';
+import Icono, { type NombreIcono } from './Icono';
 
 type Variant = 'primary' | 'secondary' | 'yellow' | 'danger';
 
@@ -14,6 +15,7 @@ interface Props {
   cargando?: boolean;
   textoCargando?: string;
   accessibilityLabel?: string;
+  icono?: NombreIcono;
 }
 
 const bg: Record<Variant, string> = {
@@ -30,7 +32,8 @@ const fg: Record<Variant, string> = {
   danger: 'text-peligro',
 };
 
-const spinner: Record<Variant, string> = {
+// Color del spinner y del ícono (el mismo del texto)
+const contenido: Record<Variant, string> = {
   primary: neutro.white,
   secondary: oficiar['very-dark'],
   yellow: oficiar['very-dark'],
@@ -47,6 +50,7 @@ export default function Button({
   cargando,
   textoCargando,
   accessibilityLabel,
+  icono,
 }: Props) {
   const v: Variant = variant ?? (secondary ? 'secondary' : 'primary');
   const bloqueado = !!disabled || !!cargando;
@@ -59,7 +63,11 @@ export default function Button({
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled: bloqueado, busy: !!cargando }}
       className={`min-h-toque flex-row items-center justify-center gap-2 rounded-boton px-bento-in active:opacity-80 disabled:opacity-50 ${bg[v]} ${className ?? ''}`}>
-      {cargando && <ActivityIndicator size="small" color={spinner[v]} />}
+      {cargando ? (
+        <ActivityIndicator size="small" color={contenido[v]} />
+      ) : (
+        icono && <Icono nombre={icono} tamano={20} color={contenido[v]} />
+      )}
       <Text className={`text-bento-body font-semibold ${fg[v]}`}>
         {cargando ? (textoCargando ?? text) : text}
       </Text>

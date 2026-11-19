@@ -80,6 +80,7 @@ export default function Client() {
 
         <Button
           text="Solicitar un servicio"
+          icono="add-circle-outline"
           onPress={() => router.push('/solicitar')}
         />
 

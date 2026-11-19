@@ -6,6 +6,7 @@ export interface User {
   email: string;
   telefono: string;
   roles: Role[];
+  fotoUrl?: string | null;
 }
 
 export interface Perfil {

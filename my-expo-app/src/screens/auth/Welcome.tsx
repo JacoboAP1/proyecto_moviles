@@ -21,10 +21,12 @@ export default function WelcomeScreen() {
       <View className="gap-3">
         <Button
           text="Hazte Cliente"
+          icono="person-add-outline"
           onPress={() => router.push('/register?role=CLIENT')}
         />
         <Button
           text="Hazte Officer"
+          icono="construct-outline"
           variant="yellow"
           onPress={() => router.push('/register?role=WORKER')}
         />
@@ -32,6 +34,7 @@ export default function WelcomeScreen() {
 
       <Button
         text="Iniciar Sesión"
+        icono="log-in-outline"
         variant="secondary"
         onPress={() => router.push('/login')}
       />

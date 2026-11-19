@@ -69,6 +69,7 @@ export default function Profile() {
           <View className="mt-2 flex-row gap-bento self-stretch">
             <Button
               text={fotoUrl ? 'Cambiar foto' : 'Subir foto'}
+              icono="camera-outline"
               variant="secondary"
               onPress={pickAndUploadImage}
               disabled={uploadingFoto}
@@ -77,6 +78,7 @@ export default function Profile() {
             {fotoUrl && (
               <Button
                 text="Eliminar foto"
+                icono="trash-outline"
                 variant="danger"
                 onPress={removeImage}
                 disabled={uploadingFoto}
@@ -120,11 +122,13 @@ export default function Profile() {
 
           <View className="mt-4 gap-3">
             <Button
-              text={isSubmitting ? 'Guardando...' : 'Guardar cambios'}
+              text="Guardar cambios"
+              textoCargando="Guardando…"
+              icono="save-outline"
               onPress={submit}
-              disabled={isSubmitting}
+              cargando={isSubmitting}
             />
-            <Button text="Cerrar sesion" onPress={logout} variant="secondary" />
+            <Button text="Cerrar sesión" icono="log-out-outline" onPress={logout} variant="secondary" />
           </View>
         </View>
       </ScrollView>

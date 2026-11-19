@@ -51,6 +51,7 @@ export default function LoginScreen() {
 
       <Button
         text={isSubmitting ? 'Entrando…' : 'Entrar'}
+        icono="log-in-outline"
         onPress={submit}
         disabled={isSubmitting}
       />

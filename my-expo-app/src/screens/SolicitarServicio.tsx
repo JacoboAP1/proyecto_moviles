@@ -80,7 +80,7 @@ export default function SolicitarServicio() {
           />
         </View>
 
-        <Button text="Ver officers disponibles" onPress={submit} />
+        <Button text="Ver officers disponibles" icono="search" onPress={submit} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

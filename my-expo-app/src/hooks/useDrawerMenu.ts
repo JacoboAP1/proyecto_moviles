@@ -32,6 +32,7 @@ export function useDrawerMenu(cerrarMenu?: () => void) {
     nombre: user?.name ?? '',
     email: user?.email ?? '',
     inicial: user?.name?.charAt(0).toUpperCase() ?? '?',
+    fotoUrl: user?.fotoUrl ?? null,
     rol: user ? ROL_LABEL[user.roles[0]] : '',
     // El admin no tiene solicitudes
     verSolicitudes: !!user && !user.roles.includes('ROLE_ADMIN'),

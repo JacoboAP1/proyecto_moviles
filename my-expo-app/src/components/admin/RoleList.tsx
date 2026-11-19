@@ -79,7 +79,7 @@ export default function RoleList() {
             onSubmitEditing={handleCrear}
           />
 
-          <Button text="Agregar" onPress={handleCrear} cargando={submitting} />
+          <Button text="Agregar" icono="add" onPress={handleCrear} cargando={submitting} />
         </View>
 
         {/* Buscar rol */}
@@ -95,7 +95,7 @@ export default function RoleList() {
             onSubmitEditing={buscar}
           />
 
-          <Button text="Buscar" variant="secondary" onPress={buscar} cargando={buscando} />
+          <Button text="Buscar" icono="search" variant="secondary" onPress={buscar} cargando={buscando} />
         </View>
       </View>
 
@@ -133,6 +133,7 @@ export default function RoleList() {
                   <View className="flex-row gap-2">
                     <Button
                       text="Cancelar"
+                      icono="close"
                       variant="secondary"
                       onPress={cancelarEdicion}
                       disabled={saving}
@@ -140,6 +141,7 @@ export default function RoleList() {
                     />
                     <Button
                       text="Guardar"
+                      icono="checkmark"
                       textoCargando="Guardando…"
                       onPress={() => guardarEdicion(item)}
                       cargando={saving}
@@ -171,6 +173,7 @@ export default function RoleList() {
                     <View className="flex-row gap-2">
                       <Button
                         text="Editar"
+                        icono="create-outline"
                         variant="secondary"
                         accessibilityLabel={`Editar el rol ${nombreVisual(item.name)}`}
                         onPress={() => comenzarEdicion(item)}
@@ -178,6 +181,7 @@ export default function RoleList() {
                       />
                       <Button
                         text="Eliminar"
+                        icono="trash-outline"
                         variant="danger"
                         accessibilityLabel={`Eliminar el rol ${nombreVisual(item.name)}`}
                         onPress={() => handleEliminar(item)}

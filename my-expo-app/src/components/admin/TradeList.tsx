@@ -63,7 +63,7 @@ export default function TradeList() {
             maxLength={100}
             editable={!submitting}
           />
-          <Button text="Agregar" onPress={handleCrear} cargando={submitting} />
+          <Button text="Agregar" icono="add" onPress={handleCrear} cargando={submitting} />
         </View>
 
         <View className="flex-row gap-2">
@@ -77,7 +77,7 @@ export default function TradeList() {
             returnKeyType="search"
             onSubmitEditing={buscar}
           />
-          <Button text="Buscar" variant="secondary" onPress={buscar} cargando={buscando} />
+          <Button text="Buscar" icono="search" variant="secondary" onPress={buscar} cargando={buscando} />
         </View>
       </View>
 
@@ -113,6 +113,7 @@ export default function TradeList() {
                   <View className="flex-row gap-2">
                     <Button
                       text="Cancelar"
+                      icono="close"
                       variant="secondary"
                       onPress={cancelarEdicion}
                       disabled={saving}
@@ -120,6 +121,7 @@ export default function TradeList() {
                     />
                     <Button
                       text="Guardar"
+                      icono="checkmark"
                       textoCargando="Guardando…"
                       onPress={() => guardarEdicion(item)}
                       cargando={saving}
@@ -136,6 +138,7 @@ export default function TradeList() {
                   <View className="flex-row gap-2">
                     <Button
                       text="Editar"
+                      icono="create-outline"
                       variant="secondary"
                       accessibilityLabel={`Editar el oficio ${item.oficio}`}
                       onPress={() => comenzarEdicion(item)}
@@ -143,6 +146,7 @@ export default function TradeList() {
                     />
                     <Button
                       text="Eliminar"
+                      icono="trash-outline"
                       variant="danger"
                       accessibilityLabel={`Eliminar el oficio ${item.oficio}`}
                       onPress={() => handleEliminar(item)}

@@ -1,7 +1,8 @@
 import { ActivityIndicator, Modal, Text, View } from 'react-native';
 import type { Entrada, TipoAviso } from '../session/alerta';
-import { oficiar } from '../theme/tokens';
+import { oficiar, peligro } from '../theme/tokens';
 import Button from './Button';
+import IconoBase, { type NombreIcono } from './Icono';
 
 interface Props {
   entrada?: Entrada;
@@ -9,13 +10,13 @@ interface Props {
   onCerrar: () => void;
 }
 
-// Cada tipo lleva símbolo + color (nunca solo color)
-const ICONO: Record<TipoAviso | 'pregunta' | 'peligro', { simbolo: string; fondo: string; color: string }> = {
-  exito: { simbolo: '✓', fondo: 'bg-oficiar-blue-btn', color: 'text-white' },
-  error: { simbolo: '!', fondo: 'bg-peligro', color: 'text-white' },
-  info: { simbolo: 'i', fondo: 'bg-oficiar-dark', color: 'text-white' },
-  pregunta: { simbolo: '?', fondo: 'bg-oficiar-yellow', color: 'text-oficiar-very-dark' },
-  peligro: { simbolo: '!', fondo: 'bg-peligro-suave', color: 'text-peligro' },
+// Cada tipo lleva ícono + color (nunca solo color)
+const ICONO: Record<TipoAviso | 'pregunta' | 'peligro', { nombre: NombreIcono; color: string }> = {
+  exito: { nombre: 'checkmark-circle', color: oficiar['blue-btn'] },
+  error: { nombre: 'close-circle', color: peligro.DEFAULT },
+  info: { nombre: 'information-circle', color: oficiar.dark },
+  pregunta: { nombre: 'help-circle', color: oficiar['blue-btn'] },
+  peligro: { nombre: 'alert-circle', color: peligro.DEFAULT },
 };
 
 // Alerta propia de OficiAR: reemplaza a Alert.alert. Se maneja con useAlerta()
@@ -90,15 +91,8 @@ function Contenido({ entrada, onConfirmar, onCerrar }: Props & { entrada: Entrad
 }
 
 function Icono({ tipo }: { tipo: keyof typeof ICONO }) {
-  const { simbolo, fondo, color } = ICONO[tipo];
-  return (
-    <View
-      importantForAccessibility="no-hide-descendants"
-      accessibilityElementsHidden
-      className={`h-14 w-14 items-center justify-center rounded-full ${fondo}`}>
-      <Text className={`text-2xl font-bold ${color}`}>{simbolo}</Text>
-    </View>
-  );
+  const { nombre, color } = ICONO[tipo];
+  return <IconoBase nombre={nombre} tamano={56} color={color} />;
 }
 
 function Textos({ titulo, mensaje }: { titulo: string; mensaje: string }) {

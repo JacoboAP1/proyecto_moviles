@@ -1,6 +1,7 @@
 import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Badge from '../components/Badge';
+import Icono from '../components/Icono';
 import Logo from '../components/Logo';
 import MenuButton from '../components/MenuButton';
 import TradeList from '../components/admin/TradeList';
@@ -8,6 +9,7 @@ import UserList from '../components/admin/UserList';
 import RoleList from '../components/admin/RoleList';
 import { useSession } from '../session/context';
 import { useAdminTabs } from '../hooks/useAdminTabs';
+import { oficiar } from '../theme/tokens';
 
 export default function Admin() {
   const { user } = useSession();
@@ -57,7 +59,12 @@ export default function Admin() {
               accessibilityState={{ selected: activa }}
               className="min-h-toque flex-1 items-center pb-4 active:opacity-70">
               <View
-                className={`mb-3 h-1 w-12 rounded-b-full ${activa ? 'bg-oficiar-blue-btn' : 'bg-transparent'}`}
+                className={`mb-2 h-1 w-12 rounded-b-full ${activa ? 'bg-oficiar-blue-btn' : 'bg-transparent'}`}
+              />
+              <Icono
+                nombre={t.icono}
+                tamano={24}
+                color={activa ? oficiar['blue-btn'] : oficiar.dark}
               />
               <Text
                 className={`text-bento-body font-semibold ${activa ? 'text-oficiar-blue-btn' : 'text-oficiar-dark'}`}>

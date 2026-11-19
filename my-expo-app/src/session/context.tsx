@@ -18,6 +18,8 @@ interface Session {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (data: SignUpData) => Promise<void>;
   signOut: () => void;
+  // Para reflejar en el menú los cambios del perfil (nombre, foto) sin volver a iniciar sesión
+  actualizarUsuario: (cambios: Partial<User>) => void;
 }
 
 const SessionContext = createContext<Session | null>(null);
@@ -40,6 +42,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       email: profile.email,
       telefono: profile.telefono,
       roles: session.roles,
+      fotoUrl: profile.fotoUrl || null,
     });
   };
 
@@ -66,8 +69,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     setUser(null);
   };
 
+  const actualizarUsuario = (cambios: Partial<User>) =>
+    setUser((actual) => (actual ? { ...actual, ...cambios } : actual));
+
   return (
-    <SessionContext value={{ user, signIn, signUp, signOut }}>
+    <SessionContext value={{ user, signIn, signUp, signOut, actualizarUsuario }}>
       {children}
     </SessionContext>
   );
