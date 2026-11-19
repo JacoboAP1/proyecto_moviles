@@ -1,19 +1,20 @@
 
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import {
   cambiarEstado,
   cotizarSolicitud,
   getMisSolicitudes,
   type AccionSolicitud,
 } from '../api/solicitudes';
+import { useAlerta } from '../session/alerta';
 import { useSession } from '../session/context';
 import type { Solicitud } from '../types';
 
 // Lista de "mis solicitudes" y sus acciones. Sirve para cliente y officer.
 export function useSolicitudes() {
   const { user } = useSession();
+  const { avisar, confirmar } = useAlerta();
   const esOfficer = user?.roles.includes('ROLE_WORKER') ?? false;
 
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
@@ -60,13 +61,27 @@ export function useSolicitudes() {
       setSolicitudes((lista) =>
         lista.map((s) => (s.id === id ? actualizada : s)),
       );
-    } catch (e) {
-      // Mensaje que devuelve el backend (403, 409, 400...)
-      Alert.alert('No se pudo completar', (e as Error).message);
     } finally {
       setProcesandoId(null);
     }
   };
+
+  // Acciones directas: si falla, se muestra el mensaje que devuelve el backend (403, 409, 400...)
+  const intentar = (id: number, accion: () => Promise<Solicitud>) =>
+    ejecutar(id, accion).catch((e) =>
+      avisar({ tipo: 'error', titulo: 'No se pudo completar', mensaje: (e as Error).message }),
+    );
+
+  // Rechazar y cancelar cierran la solicitud: se confirma y la alerta queda cargando hasta que responde
+  const cerrarSolicitud = (id: number, accion: 'rechazar' | 'cancelar') =>
+    confirmar({
+      titulo: accion === 'rechazar' ? 'Rechazar solicitud' : 'Cancelar solicitud',
+      mensaje: 'Esta acción cierra la solicitud. ¿Continuar?',
+      textoConfirmar: accion === 'rechazar' ? 'Rechazar' : 'Cancelar solicitud',
+      textoCargando: accion === 'rechazar' ? 'Rechazando…' : 'Cancelando…',
+      peligro: true,
+      accion: () => ejecutar(id, () => cambiarEstado(id, accion)),
+    });
 
   return {
     esOfficer,
@@ -78,8 +93,9 @@ export function useSolicitudes() {
     recargar,
     reintentar,
     cotizar: (id: number, precio: number) =>
-      ejecutar(id, () => cotizarSolicitud(id, precio)),
+      intentar(id, () => cotizarSolicitud(id, precio)),
     cambiarEstado: (id: number, accion: AccionSolicitud) =>
-      ejecutar(id, () => cambiarEstado(id, accion)),
+      intentar(id, () => cambiarEstado(id, accion)),
+    cerrarSolicitud,
   };
 }

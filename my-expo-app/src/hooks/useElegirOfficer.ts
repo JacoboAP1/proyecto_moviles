@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { crearSolicitud } from '../api/solicitudes';
 import { getTrabajadores } from '../api/usuarios';
+import { useAlerta } from '../session/alerta';
 import type { Trabajador } from '../types';
  
 type Params = {
@@ -15,6 +15,7 @@ type Params = {
 // Vista 2: officers del oficio elegido en la Vista 1 + crear la solicitud
 export function useElegirOfficer() {
   const router = useRouter();
+  const { confirmar } = useAlerta();
   const { perfilId, oficio, descripcion, direccion } = useLocalSearchParams<Params>();
  
   const [texto, setTexto] = useState('');
@@ -55,6 +56,7 @@ export function useElegirOfficer() {
     cargar(texto);
   };
  
+  // Si el backend responde error (409, 403, 400...), la alerta muestra su mensaje
   const enviar = async (trabajador: Trabajador) => {
     setEnviandoId(trabajador.id);
     try {
@@ -64,23 +66,27 @@ export function useElegirOfficer() {
         descripcion,
         direccion: direccion || undefined,
       });
-      Alert.alert('Solicitud enviada', `${trabajador.nombre} recibirá tu solicitud.`, [
-        { text: 'Ver mis solicitudes', onPress: () => router.replace('/solicitudes') },
-      ]);
-    } catch (e) {
-      // Mensaje que devuelve el backend (409, 403, 400...)
-      Alert.alert('No se pudo enviar', (e as Error).message);
+      return {
+        titulo: 'Solicitud enviada',
+        mensaje: `${trabajador.nombre} recibirá tu solicitud.`,
+        textoBoton: 'Ver mis solicitudes',
+        alCerrar: () => router.replace('/solicitudes'),
+      };
     } finally {
       setEnviandoId(null);
     }
   };
- 
+
   const solicitar = (trabajador: Trabajador) => {
     if (enviandoId) return; // evita crear dos solicitudes con doble toque
-    Alert.alert('Confirmar solicitud', `¿Enviar la solicitud de ${oficio} a ${trabajador.nombre}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Enviar', onPress: () => enviar(trabajador) },
-    ]);
+    confirmar({
+      titulo: 'Confirmar solicitud',
+      mensaje: `¿Enviar la solicitud de ${oficio} a ${trabajador.nombre}?`,
+      textoConfirmar: 'Enviar',
+      textoCargando: 'Enviando…',
+      tituloError: 'No se pudo enviar',
+      accion: () => enviar(trabajador),
+    });
   };
  
   return {

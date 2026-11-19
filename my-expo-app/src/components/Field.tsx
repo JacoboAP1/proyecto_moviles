@@ -28,16 +28,17 @@ export default function Field<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <View className="gap-1">
-          <Text className="font-semibold">{label}</Text>
+          <Text className="text-bento-body font-semibold text-oficiar-very-dark">{label}</Text>
           <TextInput
-            className={`rounded-lg border p-3 ${error ? 'border-red-600' : 'border-neutral-300'}`}
+            accessibilityLabel={label}
+            className={`min-h-toque rounded-bento-sm border bg-white px-bento-in text-bento-body text-oficiar-very-dark ${error ? 'border-peligro' : 'border-oficiar-dark/20'}`}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
             autoCapitalize="none"
             {...input}
           />
-          {!!error && <Text className="text-xs text-red-600">{error.message}</Text>}
+          {!!error && <Text className="text-bento-label text-peligro">{error.message}</Text>}
         </View>
       )}
     />

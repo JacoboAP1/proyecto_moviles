@@ -1,12 +1,15 @@
 import { Stack } from 'expo-router';
 import '../global.css';
+import { AlertaProvider } from '../src/session/alerta';
 import { SessionProvider, useSession } from '../src/session/context';
 import { neutro, oficiar } from '../src/theme/tokens';
 
 export default function RootLayout() {
   return (
     <SessionProvider>
-      <Navigator />
+      <AlertaProvider>
+        <Navigator />
+      </AlertaProvider>
     </SessionProvider>
   );
 }

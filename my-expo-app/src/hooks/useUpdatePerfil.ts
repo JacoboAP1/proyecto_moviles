@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { updatePerfil } from '../api/perfiles';
+import { useAlerta } from '../session/alerta';
 import type { Perfil } from '../types';
 
 export function useUpdatePerfil(cargarTodos: () => Promise<void>) {
+  const { avisar } = useAlerta();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -22,11 +23,11 @@ export function useUpdatePerfil(cargarTodos: () => Promise<void>) {
   const guardarEdicion = async (perfil: Perfil) => {
     const nombre = editingName.trim();
     if (!nombre) {
-      Alert.alert('Error', 'El nombre del oficio no puede estar vacío');
+      avisar({ tipo: 'error', titulo: 'Falta el nombre', mensaje: 'El nombre del oficio no puede estar vacío' });
       return;
     }
     if (nombre.length > 100) {
-      Alert.alert('Error', 'Máximo 100 caracteres');
+      avisar({ tipo: 'error', titulo: 'Nombre muy largo', mensaje: 'Máximo 100 caracteres' });
       return;
     }
     setSaving(true);
@@ -34,9 +35,9 @@ export function useUpdatePerfil(cargarTodos: () => Promise<void>) {
       await updatePerfil(perfil.id, nombre);
       cancelarEdicion();
       await cargarTodos();
-      Alert.alert('Listo', 'El oficio fue actualizado');
+      avisar({ tipo: 'exito', titulo: 'Listo', mensaje: 'El oficio fue actualizado' });
     } catch (error) {
-      Alert.alert('No se pudo actualizar', (error as Error).message);
+      avisar({ tipo: 'error', titulo: 'No se pudo actualizar', mensaje: (error as Error).message });
     } finally {
       setSaving(false);
     }

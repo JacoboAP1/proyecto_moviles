@@ -23,7 +23,8 @@ const fgColor: Record<Variant, string> = {
 };
 
 export default function Badge({ text, variant = 'neutral', size = 'sm' }: Props) {
-  const textSize = size === 'sm' ? 'text-[10px]' : 'text-xs';
+  // 12 px mínimo para que se lea bien
+  const textSize = size === 'sm' ? 'text-bento-label' : 'text-sm';
 
   return (
     <View className={`rounded-full px-2.5 py-1 ${bgColor[variant]}`}>

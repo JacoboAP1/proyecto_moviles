@@ -2,7 +2,6 @@
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   Text,
   TextInput,
   View,
@@ -12,6 +11,11 @@ import { useRoles } from '../../hooks/useRoles';
 import { useSearch } from '../../hooks/useSearch';
 import { useUpdateRole } from '../../hooks/useUpdateRole';
 import { neutro, oficiar } from '../../theme/tokens';
+import Badge from '../Badge';
+import Button from '../Button';
+
+const input =
+  'min-h-toque rounded-bento-sm border border-oficiar-dark/20 px-bento-in text-bento-body text-oficiar-very-dark';
 
 export default function RoleList() {
   const {
@@ -26,6 +30,7 @@ export default function RoleList() {
     handleEliminar,
     normalizarNombre,
     nombreVisual,
+    esRolBase,
   } = useRoles();
 
   const { texto, setTexto, buscando, buscar } = useSearch(
@@ -51,20 +56,21 @@ export default function RoleList() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color={oficiar.blue} />
+        <ActivityIndicator size="large" color={oficiar.blue} />
       </View>
     );
   }
 
   return (
     <View className="flex-1">
-      {/* Crear rol */}
-      <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
+      <View className="gap-bento border-b border-oficiar-dark/10 bg-white p-bento-in">
+        {/* Crear rol */}
         <View className="flex-row gap-2">
           <TextInput
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            className={`flex-1 ${input}`}
             placeholder="Nuevo rol (ej: Supervisor)"
             placeholderTextColor={neutro.placeholder}
+            accessibilityLabel="Nombre del nuevo rol"
             value={nuevoRol}
             onChangeText={setNuevoRol}
             maxLength={50}
@@ -73,36 +79,23 @@ export default function RoleList() {
             onSubmitEditing={handleCrear}
           />
 
-          <Pressable
-            onPress={handleCrear}
-            disabled={submitting}
-            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
-            <Text className="font-semibold text-white">
-              {submitting ? '...' : 'Agregar'}
-            </Text>
-          </Pressable>
+          <Button text="Agregar" onPress={handleCrear} cargando={submitting} />
         </View>
 
         {/* Buscar rol */}
         <View className="flex-row gap-2">
           <TextInput
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            className={`flex-1 ${input}`}
             placeholder="Buscar rol..."
             placeholderTextColor={neutro.placeholder}
+            accessibilityLabel="Buscar rol"
             value={texto}
             onChangeText={setTexto}
             returnKeyType="search"
             onSubmitEditing={buscar}
           />
 
-          <Pressable
-            onPress={buscar}
-            disabled={buscando}
-            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
-            <Text className="font-semibold text-white">
-              {buscando ? '...' : 'Buscar'}
-            </Text>
-          </Pressable>
+          <Button text="Buscar" variant="secondary" onPress={buscar} cargando={buscando} />
         </View>
       </View>
 
@@ -111,23 +104,25 @@ export default function RoleList() {
         data={roles}
         keyExtractor={(item) => String(item.id)}
         keyboardShouldPersistTaps="handled"
-        contentContainerClassName="px-4 py-3 gap-2"
+        contentContainerClassName="gap-bento p-bento-in pb-10"
         ListEmptyComponent={
-          <Text className="py-8 text-center text-neutral-400">
+          <Text className="py-8 text-center text-bento-body text-oficiar-dark">
             No hay roles registrados
           </Text>
         }
         renderItem={({ item }) => {
           const editando = editingId === item.id;
+          const base = esRolBase(item);
 
           return (
-            <View className="rounded-xl bg-white px-4 py-3">
+            <View className="gap-bento rounded-bento bg-white p-bento-in">
               {editando ? (
                 <>
                   <TextInput
-                    className="rounded-lg border border-neutral-300 px-3 py-2"
+                    className={input}
                     placeholder="Nombre del rol"
                     placeholderTextColor={neutro.placeholder}
+                    accessibilityLabel="Nuevo nombre del rol"
                     value={editingName}
                     onChangeText={setEditingName}
                     maxLength={50}
@@ -135,56 +130,62 @@ export default function RoleList() {
                     autoFocus
                   />
 
-                  <View className="mt-3 flex-row gap-2">
-                    <Pressable
+                  <View className="flex-row gap-2">
+                    <Button
+                      text="Cancelar"
+                      variant="secondary"
                       onPress={cancelarEdicion}
                       disabled={saving}
-                      className="flex-1 items-center justify-center rounded-lg border border-neutral-300 px-3 py-2 active:opacity-80 disabled:opacity-50">
-                      <Text className="text-sm font-semibold text-neutral-600">
-                        Cancelar
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
+                      className="flex-1"
+                    />
+                    <Button
+                      text="Guardar"
+                      textoCargando="Guardando…"
                       onPress={() => guardarEdicion(item)}
-                      disabled={saving}
-                      className="flex-1 items-center justify-center rounded-lg bg-oficiar-blue-btn px-3 py-2 active:opacity-80 disabled:opacity-50">
-                      <Text className="text-sm font-semibold text-white">
-                        {saving ? '...' : 'Guardar'}
-                      </Text>
-                    </Pressable>
+                      cargando={saving}
+                      className="flex-1"
+                    />
                   </View>
                 </>
               ) : (
-                <View className="flex-row items-center justify-between gap-3">
-                  <View className="flex-1">
-                    <Text className="font-semibold text-oficiar-very-dark">
-                      {nombreVisual(item.name)}
-                    </Text>
+                <>
+                  <View className="flex-row items-center justify-between gap-bento">
+                    <View className="flex-1 gap-0.5">
+                      <Text className="text-bento-body font-semibold text-oficiar-very-dark">
+                        {nombreVisual(item.name)}
+                      </Text>
+                      <Text className="text-bento-label text-oficiar-dark">
+                        {item.name}
+                      </Text>
+                    </View>
 
-                    <Text className="text-xs text-neutral-400">
-                      {item.name}
-                    </Text>
+                    {base && <Badge text="Rol base" variant="neutral" />}
                   </View>
 
-                  <View className="flex-row gap-2">
-                    <Pressable
-                      onPress={() => comenzarEdicion(item)}
-                      className="rounded-lg bg-blue-50 px-3 py-2 active:opacity-80">
-                      <Text className="text-sm font-semibold text-oficiar-blue">
-                        Editar
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
-                      onPress={() => handleEliminar(item)}
-                      className="rounded-lg bg-red-50 px-3 py-2 active:opacity-80">
-                      <Text className="text-sm font-semibold text-red-600">
-                        Eliminar
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
+                  {/* Los roles base no se pueden editar ni eliminar: no se muestran las opciones */}
+                  {base ? (
+                    <Text className="text-bento-label text-oficiar-dark">
+                      Lo usa la app para dar acceso; no se puede editar ni eliminar.
+                    </Text>
+                  ) : (
+                    <View className="flex-row gap-2">
+                      <Button
+                        text="Editar"
+                        variant="secondary"
+                        accessibilityLabel={`Editar el rol ${nombreVisual(item.name)}`}
+                        onPress={() => comenzarEdicion(item)}
+                        className="flex-1"
+                      />
+                      <Button
+                        text="Eliminar"
+                        variant="danger"
+                        accessibilityLabel={`Eliminar el rol ${nombreVisual(item.name)}`}
+                        onPress={() => handleEliminar(item)}
+                        className="flex-1"
+                      />
+                    </View>
+                  )}
+                </>
               )}
             </View>
           );

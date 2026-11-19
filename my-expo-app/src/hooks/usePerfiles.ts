@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { createPerfil, deletePerfil, getPerfiles } from '../api/perfiles';
+import { useAlerta } from '../session/alerta';
 import type { Perfil } from '../types';
 
 export function usePerfiles() {
+  const { avisar, confirmar } = useAlerta();
   const [perfiles, setPerfiles] = useState<Perfil[]>([]);
   const [loading, setLoading] = useState(true);
   const [nuevoOficio, setNuevoOficio] = useState('');
@@ -13,7 +14,7 @@ export function usePerfiles() {
     try {
       setPerfiles(await getPerfiles());
     } catch (error) {
-      Alert.alert('Error', (error as Error).message);
+      avisar({ tipo: 'error', titulo: 'Error', mensaje: (error as Error).message });
     } finally {
       setLoading(false);
     }
@@ -30,7 +31,7 @@ export function usePerfiles() {
       })
       .catch((error) => {
         if (!cancelado) {
-          Alert.alert('Error', (error as Error).message);
+          avisar({ tipo: 'error', titulo: 'Error', mensaje: (error as Error).message });
         }
       })
       .finally(() => {
@@ -42,18 +43,18 @@ export function usePerfiles() {
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [avisar]);
 
   const handleCrear = async () => {
     const nombre = nuevoOficio.trim();
 
     if (!nombre) {
-      Alert.alert('Error', 'Escribe el nombre del oficio');
+      avisar({ tipo: 'error', titulo: 'Falta el nombre', mensaje: 'Escribe el nombre del oficio' });
       return;
     }
 
     if (nombre.length > 100) {
-      Alert.alert('Error', 'Maximo 100 caracteres');
+      avisar({ tipo: 'error', titulo: 'Nombre muy largo', mensaje: 'Máximo 100 caracteres' });
       return;
     }
 
@@ -63,38 +64,29 @@ export function usePerfiles() {
       await createPerfil(nombre);
       setNuevoOficio('');
       await cargarTodos();
-      Alert.alert('Listo', `"${nombre}" fue agregado`);
+      avisar({ tipo: 'exito', titulo: 'Listo', mensaje: `"${nombre}" fue agregado` });
     } catch (error) {
-      Alert.alert('Error al crear', (error as Error).message);
+      avisar({ tipo: 'error', titulo: 'Error al crear', mensaje: (error as Error).message });
     } finally {
       setSubmitting(false);
     }
   };
 
+  // La alerta queda cargando (y bloquea la pantalla) hasta que el servidor responde
   const handleEliminar = (perfil: Perfil) => {
-    Alert.alert(
-      'Eliminar oficio',
-      `¿Seguro que quieres eliminar "${perfil.oficio}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deletePerfil(perfil.id);
-              await cargarTodos();
-              Alert.alert('Listo', `"${perfil.oficio}" fue eliminado`);
-            } catch (error) {
-              Alert.alert(
-                'No se pudo eliminar',
-                (error as Error).message
-              );
-            }
-          },
-        },
-      ],
-    );
+    confirmar({
+      titulo: 'Eliminar oficio',
+      mensaje: `¿Seguro que quieres eliminar "${perfil.oficio}"?`,
+      textoConfirmar: 'Eliminar',
+      textoCargando: 'Eliminando…',
+      peligro: true,
+      tituloError: 'No se pudo eliminar',
+      accion: async () => {
+        await deletePerfil(perfil.id);
+        setPerfiles(await getPerfiles());
+        return { titulo: 'Listo', mensaje: `"${perfil.oficio}" fue eliminado` };
+      },
+    });
   };
 
   return {

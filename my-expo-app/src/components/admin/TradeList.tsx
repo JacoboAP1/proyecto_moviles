@@ -2,7 +2,6 @@
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   Text,
   TextInput,
   View,
@@ -12,6 +11,10 @@ import { usePerfiles } from '../../hooks/usePerfiles';
 import { useSearch } from '../../hooks/useSearch';
 import { useUpdatePerfil } from '../../hooks/useUpdatePerfil';
 import { neutro, oficiar } from '../../theme/tokens';
+import Button from '../Button';
+
+const input =
+  'min-h-toque rounded-bento-sm border border-oficiar-dark/20 px-bento-in text-bento-body text-oficiar-very-dark';
 
 export default function TradeList() {
   const {
@@ -41,52 +44,40 @@ export default function TradeList() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator color={oficiar.blue} />
+        <ActivityIndicator size="large" color={oficiar.blue} />
       </View>
     );
   }
 
   return (
     <View className="flex-1">
-      <View className="gap-2 border-b border-neutral-200 bg-white px-4 py-3">
+      <View className="gap-bento border-b border-oficiar-dark/10 bg-white p-bento-in">
         <View className="flex-row gap-2">
           <TextInput
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            className={`flex-1 ${input}`}
             placeholder="Nuevo oficio (ej: Soldador)"
             placeholderTextColor={neutro.placeholder}
+            accessibilityLabel="Nombre del nuevo oficio"
             value={nuevoOficio}
             onChangeText={setNuevoOficio}
             maxLength={100}
             editable={!submitting}
           />
-          <Pressable
-            onPress={handleCrear}
-            disabled={submitting}
-            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
-            <Text className="font-semibold text-white">
-              {submitting ? '...' : 'Agregar'}
-            </Text>
-          </Pressable>
+          <Button text="Agregar" onPress={handleCrear} cargando={submitting} />
         </View>
 
         <View className="flex-row gap-2">
           <TextInput
-            className="flex-1 rounded-lg border border-neutral-300 px-3 py-2"
+            className={`flex-1 ${input}`}
             placeholder="Buscar oficio..."
             placeholderTextColor={neutro.placeholder}
+            accessibilityLabel="Buscar oficio"
             value={texto}
             onChangeText={setTexto}
             returnKeyType="search"
             onSubmitEditing={buscar}
           />
-          <Pressable
-            onPress={buscar}
-            disabled={buscando}
-            className="items-center justify-center rounded-lg bg-oficiar-blue-btn px-4 active:opacity-80 disabled:opacity-50">
-            <Text className="font-semibold text-white">
-              {buscando ? '...' : 'Buscar'}
-            </Text>
-          </Pressable>
+          <Button text="Buscar" variant="secondary" onPress={buscar} cargando={buscando} />
         </View>
       </View>
 
@@ -94,9 +85,9 @@ export default function TradeList() {
         data={perfiles}
         keyExtractor={(item) => String(item.id)}
         keyboardShouldPersistTaps="handled"
-        contentContainerClassName="px-4 py-3 gap-2"
+        contentContainerClassName="gap-bento p-bento-in pb-10"
         ListEmptyComponent={
-          <Text className="py-8 text-center text-neutral-400">
+          <Text className="py-8 text-center text-bento-body text-oficiar-dark">
             {texto.trim() ? 'No hay oficios que coincidan' : 'No hay oficios registrados'}
           </Text>
         }
@@ -104,13 +95,14 @@ export default function TradeList() {
           const editando = editingId === item.id;
 
           return (
-            <View className="rounded-xl bg-white px-4 py-3">
+            <View className="gap-bento rounded-bento bg-white p-bento-in">
               {editando ? (
                 <>
                   <TextInput
-                    className="rounded-lg border border-neutral-300 px-3 py-2"
+                    className={input}
                     placeholder="Nombre del oficio"
                     placeholderTextColor={neutro.placeholder}
+                    accessibilityLabel="Nuevo nombre del oficio"
                     value={editingName}
                     onChangeText={setEditingName}
                     maxLength={100}
@@ -118,50 +110,46 @@ export default function TradeList() {
                     autoFocus
                   />
 
-                  <View className="mt-3 flex-row gap-2">
-                    <Pressable
+                  <View className="flex-row gap-2">
+                    <Button
+                      text="Cancelar"
+                      variant="secondary"
                       onPress={cancelarEdicion}
                       disabled={saving}
-                      className="flex-1 items-center justify-center rounded-lg border border-neutral-300 px-3 py-2 active:opacity-80 disabled:opacity-50">
-                      <Text className="text-sm font-semibold text-neutral-600">
-                        Cancelar
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
+                      className="flex-1"
+                    />
+                    <Button
+                      text="Guardar"
+                      textoCargando="Guardando…"
                       onPress={() => guardarEdicion(item)}
-                      disabled={saving}
-                      className="flex-1 items-center justify-center rounded-lg bg-oficiar-blue-btn px-3 py-2 active:opacity-80 disabled:opacity-50">
-                      <Text className="text-sm font-semibold text-white">
-                        {saving ? '...' : 'Guardar'}
-                      </Text>
-                    </Pressable>
+                      cargando={saving}
+                      className="flex-1"
+                    />
                   </View>
                 </>
               ) : (
-                <View className="flex-row items-center justify-between gap-3">
-                  <Text className="flex-1 font-semibold text-oficiar-very-dark">
+                <>
+                  <Text className="text-bento-title font-semibold text-oficiar-very-dark">
                     {item.oficio}
                   </Text>
 
                   <View className="flex-row gap-2">
-                    <Pressable
+                    <Button
+                      text="Editar"
+                      variant="secondary"
+                      accessibilityLabel={`Editar el oficio ${item.oficio}`}
                       onPress={() => comenzarEdicion(item)}
-                      className="rounded-lg bg-blue-50 px-3 py-2 active:opacity-80">
-                      <Text className="text-sm font-semibold text-oficiar-blue">
-                        Editar
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
+                      className="flex-1"
+                    />
+                    <Button
+                      text="Eliminar"
+                      variant="danger"
+                      accessibilityLabel={`Eliminar el oficio ${item.oficio}`}
                       onPress={() => handleEliminar(item)}
-                      className="rounded-lg bg-red-50 px-3 py-2 active:opacity-80">
-                      <Text className="text-sm font-semibold text-red-600">
-                        Eliminar
-                      </Text>
-                    </Pressable>
+                      className="flex-1"
+                    />
                   </View>
-                </View>
+                </>
               )}
             </View>
           );

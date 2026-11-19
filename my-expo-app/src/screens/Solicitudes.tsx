@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Text,
   TextInput,
@@ -27,6 +26,7 @@ export default function Solicitudes() {
     reintentar,
     cotizar,
     cambiarEstado,
+    cerrarSolicitud,
   } = useSolicitudes();
 
   if (loading) {
@@ -74,6 +74,7 @@ export default function Solicitudes() {
             procesando={procesandoId === item.id}
             cotizar={cotizar}
             cambiarEstado={cambiarEstado}
+            cerrarSolicitud={cerrarSolicitud}
           />
         </SolicitudCard>
       )}
@@ -87,6 +88,7 @@ interface AccionesProps {
   procesando: boolean;
   cotizar: (id: number, precio: number) => void;
   cambiarEstado: (id: number, accion: AccionSolicitud) => void;
+  cerrarSolicitud: (id: number, accion: 'rechazar' | 'cancelar') => void;
 }
 
 // Botones según rol y estado (las mismas reglas que la máquina de estados del backend)
@@ -96,24 +98,13 @@ function Acciones({
   procesando,
   cotizar,
   cambiarEstado,
+  cerrarSolicitud,
 }: AccionesProps) {
   const [precio, setPrecio] = useState('');
   const { id, estado } = solicitud;
 
   // Rechazar y cancelar cierran la solicitud: se pide confirmación
-  const confirmar = (accion: 'rechazar' | 'cancelar') =>
-    Alert.alert(
-      accion === 'rechazar' ? 'Rechazar solicitud' : 'Cancelar solicitud',
-      'Esta acción cierra la solicitud. ¿Continuar?',
-      [
-        { text: 'No', style: 'cancel' },
-        {
-          text: 'Sí',
-          style: 'destructive',
-          onPress: () => cambiarEstado(id, accion),
-        },
-      ],
-    );
+  const confirmar = (accion: 'rechazar' | 'cancelar') => cerrarSolicitud(id, accion);
 
   if (procesando) return <ActivityIndicator />;
 

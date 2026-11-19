@@ -1,14 +1,18 @@
-import { Alert } from 'react-native';
+import { useAlerta } from '../session/alerta';
 import { useSession } from '../session/context';
 
 export function useLogout() {
   const { signOut } = useSession();
+  const { confirmar } = useAlerta();
 
   const logout = () => {
-    Alert.alert('Cerrar sesión', '¿Seguro que quieres salir?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sí, salir', style: 'destructive', onPress: signOut },
-    ]);
+    confirmar({
+      titulo: 'Cerrar sesión',
+      mensaje: '¿Seguro que quieres salir?',
+      textoConfirmar: 'Sí, salir',
+      peligro: true,
+      accion: signOut,
+    });
   };
 
   return { logout };

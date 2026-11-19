@@ -1,4 +1,5 @@
-import { Pressable, Text } from 'react-native';
+import { ActivityIndicator, Pressable, Text } from 'react-native';
+import { neutro, oficiar, peligro } from '../theme/tokens';
 
 type Variant = 'primary' | 'secondary' | 'yellow' | 'danger';
 
@@ -9,6 +10,10 @@ interface Props {
   secondary?: boolean;
   variant?: Variant;
   className?: string;
+  // Muestra el spinner y bloquea el botón mientras espera al servidor
+  cargando?: boolean;
+  textoCargando?: string;
+  accessibilityLabel?: string;
 }
 
 const bg: Record<Variant, string> = {
@@ -25,18 +30,38 @@ const fg: Record<Variant, string> = {
   danger: 'text-peligro',
 };
 
-export default function Button({ text, onPress, disabled, secondary, variant, className }: Props) {
+const spinner: Record<Variant, string> = {
+  primary: neutro.white,
+  secondary: oficiar['very-dark'],
+  yellow: oficiar['very-dark'],
+  danger: peligro.DEFAULT,
+};
+
+export default function Button({
+  text,
+  onPress,
+  disabled,
+  secondary,
+  variant,
+  className,
+  cargando,
+  textoCargando,
+  accessibilityLabel,
+}: Props) {
   const v: Variant = variant ?? (secondary ? 'secondary' : 'primary');
+  const bloqueado = !!disabled || !!cargando;
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={bloqueado}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
-      className={`min-h-toque items-center justify-center rounded-boton px-bento-in active:opacity-80 disabled:opacity-50 ${bg[v]} ${className ?? ''}`}>
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled: bloqueado, busy: !!cargando }}
+      className={`min-h-toque flex-row items-center justify-center gap-2 rounded-boton px-bento-in active:opacity-80 disabled:opacity-50 ${bg[v]} ${className ?? ''}`}>
+      {cargando && <ActivityIndicator size="small" color={spinner[v]} />}
       <Text className={`text-bento-body font-semibold ${fg[v]}`}>
-        {text}
+        {cargando ? (textoCargando ?? text) : text}
       </Text>
     </Pressable>
   );

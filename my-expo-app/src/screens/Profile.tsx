@@ -6,7 +6,7 @@ import Logo from '../components/Logo';
 import { useSession } from '../session/context';
 import { useLogout } from '../hooks/useLogout';
 import { useProfile } from '../hooks/useProfile';
-import { neutro } from '../theme/tokens';
+import { neutro, oficiar } from '../theme/tokens';
 
 export default function Profile() {
   const { user } = useSession();
@@ -24,7 +24,13 @@ export default function Profile() {
 
   const headerHeight = useHeaderHeight();
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-oficiar-gray">
+        <ActivityIndicator size="large" color={oficiar.blue} />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -41,9 +47,11 @@ export default function Profile() {
           <Logo size="sm" light />
 
           <View className="relative mt-2">
-            <Pressable 
-              onPress={pickAndUploadImage} 
+            <Pressable
+              onPress={pickAndUploadImage}
               disabled={uploadingFoto}
+              accessibilityRole="button"
+              accessibilityLabel="Cambiar foto de perfil"
               className="h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-oficiar-blue border-2 border-white">
               {uploadingFoto ? (
                 <ActivityIndicator color={neutro.white} size="small" />
@@ -57,17 +65,23 @@ export default function Profile() {
             </Pressable>
           </View>
 
-          {/* Botones rápidos de gestión de foto */}
-          <View className="flex-row gap-3 mt-1">
-            <Pressable onPress={pickAndUploadImage} disabled={uploadingFoto}>
-              <Text className="text-xs font-semibold text-oficiar-blue">
-                {fotoUrl ? 'Cambiar foto' : 'Subir foto'}
-              </Text>
-            </Pressable>
+          {/* Botones de gestión de foto (tamaño de toque de 48 px) */}
+          <View className="mt-2 flex-row gap-bento self-stretch">
+            <Button
+              text={fotoUrl ? 'Cambiar foto' : 'Subir foto'}
+              variant="secondary"
+              onPress={pickAndUploadImage}
+              disabled={uploadingFoto}
+              className="flex-1"
+            />
             {fotoUrl && (
-              <Pressable onPress={removeImage} disabled={uploadingFoto}>
-                <Text className="text-xs font-semibold text-red-400">Eliminar</Text>
-              </Pressable>
+              <Button
+                text="Eliminar foto"
+                variant="danger"
+                onPress={removeImage}
+                disabled={uploadingFoto}
+                className="flex-1"
+              />
             )}
           </View>
         </View>

@@ -17,26 +17,35 @@ export default function DrawerMenu({ navigation }: DrawerContentComponentProps) 
           <Text className="text-2xl font-bold text-white">{inicial}</Text>
         </View>
         <Text className="mt-2 text-base font-bold text-white">{nombre}</Text>
-        <Text className="text-xs text-white/70">{email}</Text>
-        <Text className="mt-1 text-xs font-semibold text-oficiar-blue">{rol}</Text>
+        <Text className="text-bento-label text-white/80">{email}</Text>
+        <Text className="mt-1 text-bento-label font-semibold text-oficiar-blue">{rol}</Text>
       </View>
 
-      <View className="px-3 py-3">
-        <Pressable onPress={irAPerfil} className="rounded-lg px-3 py-3 active:bg-neutral-100">
-          <Text className="font-semibold text-oficiar-very-dark">Mi perfil</Text>
+      <View className="gap-1 px-3 py-3">
+        <Pressable
+          onPress={irAPerfil}
+          accessibilityRole="button"
+          className="min-h-toque justify-center rounded-bento-sm px-3 active:bg-oficiar-gray">
+          <Text className="text-bento-body font-semibold text-oficiar-very-dark">Mi perfil</Text>
         </Pressable>
         {verSolicitudes && (
-          <Pressable onPress={irASolicitudes} className="rounded-lg px-3 py-3 active:bg-neutral-100">
-            <Text className="font-semibold text-oficiar-very-dark">Solicitudes</Text>
+          <Pressable
+            onPress={irASolicitudes}
+            accessibilityRole="button"
+            className="min-h-toque justify-center rounded-bento-sm px-3 active:bg-oficiar-gray">
+            <Text className="text-bento-body font-semibold text-oficiar-very-dark">Solicitudes</Text>
           </Pressable>
         )}
       </View>
 
       <View
-        className="mt-auto border-t border-neutral-200 px-3 pt-3"
+        className="mt-auto border-t border-oficiar-dark/10 px-3 pt-3"
         style={{ paddingBottom: insets.bottom + 12 }}>
-        <Pressable onPress={cerrarSesion} className="rounded-lg px-3 py-3 active:bg-red-50">
-          <Text className="font-semibold text-red-600">Cerrar sesión</Text>
+        <Pressable
+          onPress={cerrarSesion}
+          accessibilityRole="button"
+          className="min-h-toque justify-center rounded-bento-sm px-3 active:bg-peligro-suave">
+          <Text className="text-bento-body font-semibold text-peligro">Cerrar sesión</Text>
         </Pressable>
       </View>
     </View>

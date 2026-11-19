@@ -1,13 +1,14 @@
 
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { updateRole, type Role } from '../api/roles';
+import { useAlerta } from '../session/alerta';
 
 export function useUpdateRole(
   cargarTodos: () => Promise<void>,
   normalizarNombre: (value: string) => string,
   nombreVisual: (name: string) => string,
 ) {
+  const { avisar } = useAlerta();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -26,12 +27,12 @@ export function useUpdateRole(
     const nombre = normalizarNombre(editingName);
 
     if (!nombre) {
-      Alert.alert('Error', 'El nombre del rol no puede estar vacío');
+      avisar({ tipo: 'error', titulo: 'Falta el nombre', mensaje: 'El nombre del rol no puede estar vacío' });
       return;
     }
 
     if (nombre.length > 50) {
-      Alert.alert('Error', 'El nombre del rol es demasiado largo');
+      avisar({ tipo: 'error', titulo: 'Nombre muy largo', mensaje: 'El nombre del rol es demasiado largo' });
       return;
     }
 
@@ -41,9 +42,9 @@ export function useUpdateRole(
       await updateRole(role.id, nombre);
       cancelarEdicion();
       await cargarTodos();
-      Alert.alert('Listo', 'El rol fue actualizado');
+      avisar({ tipo: 'exito', titulo: 'Listo', mensaje: 'El rol fue actualizado' });
     } catch (error) {
-      Alert.alert('No se pudo actualizar', (error as Error).message);
+      avisar({ tipo: 'error', titulo: 'No se pudo actualizar', mensaje: (error as Error).message });
     } finally {
       setSaving(false);
     }

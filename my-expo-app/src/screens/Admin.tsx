@@ -45,7 +45,7 @@ export default function Admin() {
       </KeyboardAvoidingView>
 
       <View
-        className="flex-row border-t border-neutral-200 bg-white"
+        className="flex-row border-t border-oficiar-dark/10 bg-white"
         style={{ paddingBottom: insets.bottom }}>
         {tabs.map((t) => {
           const activa = tab === t.key;
@@ -55,12 +55,12 @@ export default function Admin() {
               onPress={() => setTab(t.key)}
               accessibilityRole="tab"
               accessibilityState={{ selected: activa }}
-              className="flex-1 items-center pb-3 active:opacity-70">
+              className="min-h-toque flex-1 items-center pb-4 active:opacity-70">
               <View
-                className={`mb-2 h-1 w-10 rounded-b-full ${activa ? 'bg-oficiar-blue' : 'bg-transparent'}`}
+                className={`mb-3 h-1 w-12 rounded-b-full ${activa ? 'bg-oficiar-blue-btn' : 'bg-transparent'}`}
               />
               <Text
-                className={`text-sm font-semibold ${activa ? 'text-oficiar-blue' : 'text-neutral-400'}`}>
+                className={`text-bento-body font-semibold ${activa ? 'text-oficiar-blue-btn' : 'text-oficiar-dark'}`}>
                 {t.label}
               </Text>
             </Pressable>
