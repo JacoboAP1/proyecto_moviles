@@ -19,7 +19,9 @@
           "photosPermission": "La aplicación requiere acceso a tus fotos para cambiar la imagen de perfil.",
           "cameraPermission": "La aplicación requiere acceso a la cámara para tomar una foto de perfil."
         }
-      ]
+      ],
+      "expo-notifications",
+      "expo-font"
     ],
     "orientation": "portrait",
     "icon": "./assets/logo_oficiar.png",
@@ -39,7 +41,8 @@
         "foregroundImage": "./assets/logo_oficiar.png",
         "backgroundColor": "#051A26"
       },
-      "package": "com.victormanuel1.oficiar"
+      "package": "com.victormanuel1.oficiar",
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "router": {},

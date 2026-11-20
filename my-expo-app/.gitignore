@@ -7,6 +7,8 @@ npm-debug.*
 *.p12
 *.key
 *.mobileprovision
+# Clave privada de Firebase (cuenta de servicio): va en expo.dev, nunca en el repositorio
+*firebase-adminsdk*.json
 *.orig.*
 web-build/
 

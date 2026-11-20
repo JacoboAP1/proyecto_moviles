@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "63645156266",
+    "project_id": "oficiar-5b187",
+    "storage_bucket": "oficiar-5b187.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63645156266:android:478ad944b329989e63a1d3",
+        "android_client_info": {
+          "package_name": "com.victormanuel1.oficiar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVE4CvDfb9HIX-5fJeqLUsHsKYXXzcUIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
