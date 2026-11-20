@@ -1,4 +1,4 @@
-import type { Solicitud } from '../types';
+import type { Estadisticas, Solicitud } from '../types';
 import { request } from './client';
 
 export interface NuevaSolicitud {
@@ -19,6 +19,11 @@ export async function crearSolicitud(data: NuevaSolicitud): Promise<Solicitud> {
 // Cliente: las que hizo. Officer: las que recibió
 export async function getMisSolicitudes(): Promise<Solicitud[]> {
   return request<Solicitud[]>('/api/solicitudes/mias');
+}
+
+// Conteo de mis solicitudes por grupo de estado (lo calcula el backend según el rol)
+export async function getEstadisticas(): Promise<Estadisticas> {
+  return request<Estadisticas>('/api/solicitudes/estadisticas');
 }
 
 // El officer acepta proponiendo el precio; queda COTIZADA

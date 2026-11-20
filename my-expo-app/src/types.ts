@@ -34,6 +34,13 @@ export interface Trabajador {
   oficios: Perfil[];
 }
 
+// Resumen que devuelve GET /api/solicitudes/estadisticas (el backend agrupa los estados según el rol)
+export interface Estadisticas {
+  pendientes: number;
+  activos: number;
+  finalizados: number;
+}
+
 // Solicitud que devuelve el backend en /api/solicitudes
 export interface Solicitud {
   id: number;

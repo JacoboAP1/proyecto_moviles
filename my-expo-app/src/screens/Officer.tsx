@@ -1,14 +1,21 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Button from '../components/Button';
 import Logo from '../components/Logo';
 import MenuButton from '../components/MenuButton';
+import StatCard from '../components/StatCard';
+import { useEstadisticas } from '../hooks/useEstadisticas';
 import { useSession } from '../session/context';
+import { oficiar } from '../theme/tokens';
 
 export default function Officer() {
   const { user } = useSession();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { estadisticas, error } = useEstadisticas();
+  const porResponder = estadisticas?.pendientes ?? 0;
+  const verSolicitudes = () => router.push('/solicitudes');
 
   return (
     <View className="flex-1 bg-oficiar-gray">
@@ -50,13 +57,24 @@ export default function Officer() {
           <Text className="text-oficiar-blue">servicios</Text>
         </Text>
 
-        <View className="rounded-2xl border-l-4 border-oficiar-blue bg-white p-5">
-          <Text className="font-semibold text-oficiar-very-dark">
-            Sin servicios pendientes
-          </Text>
-          <Text className="mt-1 text-sm text-neutral-500">
-            Aquí aparecerán las solicitudes de tus clientes
-          </Text>
+        <View className="gap-bento rounded-2xl border-l-4 border-oficiar-blue bg-white p-5">
+          {porResponder > 0 ? (
+            <>
+              <Text className="font-semibold text-oficiar-very-dark">
+                Tienes {porResponder} {porResponder === 1 ? 'solicitud' : 'solicitudes'} por responder
+              </Text>
+              <Button text="Ver solicitudes" icono="document-text-outline" onPress={verSolicitudes} />
+            </>
+          ) : (
+            <>
+              <Text className="font-semibold text-oficiar-very-dark">
+                Sin solicitudes por responder
+              </Text>
+              <Text className="text-sm text-oficiar-dark">
+                Aquí aparecerán las solicitudes de tus clientes
+              </Text>
+            </>
+          )}
         </View>
 
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
@@ -64,20 +82,35 @@ export default function Officer() {
           <Text className="text-oficiar-blue">estadísticas</Text>
         </Text>
 
+        {/* Se actualizan solas cada 10 s mientras el home está abierto */}
         <View className="flex-row gap-3">
-          <View className="flex-1 items-center rounded-2xl bg-white p-5">
-            <Text className="text-2xl font-black text-oficiar-blue">0</Text>
-            <Text className="text-xs text-neutral-500">Servicios</Text>
-          </View>
-          <View className="flex-1 items-center rounded-2xl bg-white p-5">
-            <Text className="text-2xl font-black text-oficiar-yellow">0</Text>
-            <Text className="text-xs text-neutral-500">Pendientes</Text>
-          </View>
-          <View className="flex-1 items-center rounded-2xl bg-white p-5">
-            <Text className="text-2xl font-black text-green-500">0</Text>
-            <Text className="text-xs text-neutral-500">Completados</Text>
-          </View>
+          <StatCard
+            icono="mail-unread-outline"
+            valor={estadisticas?.pendientes ?? null}
+            etiqueta="Por responder"
+            color={oficiar.yellow}
+            onPress={verSolicitudes}
+          />
+          <StatCard
+            icono="construct-outline"
+            valor={estadisticas?.activos ?? null}
+            etiqueta="Activos"
+            color={oficiar['blue-btn']}
+            onPress={verSolicitudes}
+          />
+          <StatCard
+            icono="checkmark-done-outline"
+            valor={estadisticas?.finalizados ?? null}
+            etiqueta="Finalizados"
+            color={oficiar.dark}
+            onPress={verSolicitudes}
+          />
         </View>
+        {!!error && !estadisticas && (
+          <Text className="text-center text-bento-label text-oficiar-dark">
+            No se pudieron cargar tus estadísticas
+          </Text>
+        )}
 
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
           Ofertas{' '}

@@ -4,7 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
 import MenuButton from '../components/MenuButton';
+import StatCard from '../components/StatCard';
+import { useEstadisticas } from '../hooks/useEstadisticas';
 import { useSession } from '../session/context';
+import { oficiar } from '../theme/tokens';
 
 const servicios = [
   'Electricidad',
@@ -25,6 +28,8 @@ export default function Client() {
   const { user } = useSession();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { estadisticas, error } = useEstadisticas();
+  const verSolicitudes = () => router.push('/solicitudes');
 
   return (
     <View className="flex-1 bg-oficiar-gray">
@@ -61,6 +66,41 @@ export default function Client() {
       </View>
 
       <ScrollView className="flex-1" contentContainerClassName="px-4 pt-5 pb-10 gap-5">
+        <Text className="text-xl font-extrabold text-oficiar-very-dark">
+          Tus{' '}
+          <Text className="text-oficiar-blue">servicios</Text>
+        </Text>
+
+        {/* Se actualizan solas cada 10 s mientras el home está abierto */}
+        <View className="flex-row gap-3">
+          <StatCard
+            icono="hourglass-outline"
+            valor={estadisticas?.pendientes ?? null}
+            etiqueta="Esperando"
+            color={oficiar.yellow}
+            onPress={verSolicitudes}
+          />
+          <StatCard
+            icono="construct-outline"
+            valor={estadisticas?.activos ?? null}
+            etiqueta="En curso"
+            color={oficiar['blue-btn']}
+            onPress={verSolicitudes}
+          />
+          <StatCard
+            icono="checkmark-done-outline"
+            valor={estadisticas?.finalizados ?? null}
+            etiqueta="Finalizados"
+            color={oficiar.dark}
+            onPress={verSolicitudes}
+          />
+        </View>
+        {!!error && !estadisticas && (
+          <Text className="text-center text-bento-label text-oficiar-dark">
+            No se pudieron cargar tus estadísticas
+          </Text>
+        )}
+
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
           Nuestros{' '}
           <Text className="text-oficiar-blue">servicios</Text>
