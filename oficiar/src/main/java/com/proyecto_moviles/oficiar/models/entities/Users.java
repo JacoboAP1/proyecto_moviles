@@ -1,5 +1,6 @@
 package com.proyecto_moviles.oficiar.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -66,6 +67,11 @@ public class Users implements UserDetails {
                 .map(r -> (GrantedAuthority) r::getName)
                 .collect(Collectors.toSet());
     }
+
+    // Token de Expo del celular donde inició sesión (notificaciones push). null = no recibe avisos
+    @JsonIgnore
+    @Column(name = "expo_push_token", length = 255)
+    private String expoPushToken;
 
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
