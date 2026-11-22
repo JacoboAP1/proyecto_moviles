@@ -16,6 +16,9 @@ import com.proyecto_moviles.oficiar.repositories.SolicitudServicioRepository;
 import com.proyecto_moviles.oficiar.repositories.UsersRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.proyecto_moviles.oficiar.services.Notificaciones.AvisoPush;
+import org.springframework.context.ApplicationEventPublisher;
+import java.util.Locale;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,13 +29,16 @@ public class SolicitudService {
     private final SolicitudServicioRepository solicitudRepository;
     private final UsersRepository usersRepository;
     private final PerfilRepository perfilRepository;
+    private final ApplicationEventPublisher eventos;
 
     public SolicitudService(SolicitudServicioRepository solicitudRepository,
                             UsersRepository usersRepository,
-                            PerfilRepository perfilRepository) {
+                            PerfilRepository perfilRepository,
+                            ApplicationEventPublisher eventos) {
         this.solicitudRepository = solicitudRepository;
         this.usersRepository = usersRepository;
         this.perfilRepository = perfilRepository;
+        this.eventos = eventos;
     }
 
     // CREAR: el cliente le pide un servicio a un officer -> queda PENDIENTE
@@ -72,7 +78,13 @@ public class SolicitudService {
                 ? null : req.getDireccion().trim());
         solicitud.setEstado(EstadoSolicitud.PENDIENTE);
 
-        return SolicitudResponse.from(solicitudRepository.save(solicitud));
+        SolicitudServicio guardada = solicitudRepository.save(solicitud);
+
+        // Aviso al officer: le llegó una solicitud nueva
+        eventos.publishEvent(new AvisoPush(officer, "Nueva solicitud",
+                cliente.getUsername() + " necesita un servicio de " + oficio.getOficio(), guardada.getId()));
+
+        return SolicitudResponse.from(guardada);
     }
 
     // LISTAR: el cliente ve las que hizo; el officer, las que recibió
@@ -116,7 +128,9 @@ public class SolicitudService {
         }
 
         solicitud.setEstado(nuevoEstado);
-        return SolicitudResponse.from(solicitudRepository.save(solicitud));
+        SolicitudServicio guardada = solicitudRepository.save(solicitud);
+        avisar(guardada, accion, rol);
+        return SolicitudResponse.from(guardada);
     }
 
     // Si la solicitud no existe o no es suya -> 404 (no se revela que existe)
@@ -135,5 +149,34 @@ public class SolicitudService {
 
     private boolean tieneRol(Users usuario, String rol) {
         return usuario.getRoles().stream().anyMatch(r -> rol.equals(r.getName()));
+    }
+
+    // Arma el aviso según la acción y quién la hizo, y se lo envía al otro participante
+    private void avisar(SolicitudServicio s, AccionSolicitud accion, TransicionesSolicitud.Rol rol) {
+        boolean loHizoOfficer = rol == TransicionesSolicitud.Rol.OFFICER;
+        Users destino = loHizoOfficer ? s.getCliente() : s.getOfficer();
+        String cliente = s.getCliente().getUsername();
+        String officer = s.getOfficer().getUsername();
+        String oficio = s.getOficio().getOficio();
+        String precio = pesos(s.getPrecioAcordado());
+
+        String[] aviso = switch (accion) {
+            // ACEPTAR: el officer cotiza o el cliente acepta el precio (mismo endpoint)
+            case ACEPTAR -> loHizoOfficer
+                    ? new String[]{"Te cotizaron el servicio", officer + " cotizó tu servicio de " + oficio + " por " + precio}
+                    : new String[]{"Cotización aceptada", cliente + " aceptó tu cotización de " + precio};
+            case INICIAR -> new String[]{"Tu servicio comenzó", officer + " comenzó tu servicio de " + oficio};
+            case FINALIZAR -> new String[]{"Servicio finalizado", cliente + " finalizó el servicio de " + oficio};
+            case RECHAZAR -> loHizoOfficer
+                    ? new String[]{"Solicitud rechazada", officer + " rechazó tu solicitud de " + oficio}
+                    : new String[]{"Cotización rechazada", cliente + " rechazó la cotización de " + oficio};
+            case CANCELAR -> new String[]{"Solicitud cancelada", cliente + " canceló la solicitud de " + oficio};
+        };
+        eventos.publishEvent(new AvisoPush(destino, aviso[0], aviso[1], s.getId()));
+    }
+
+    // 80000 -> "$80.000"
+    private static String pesos(BigDecimal valor) {
+        return valor == null ? "" : "$" + String.format(Locale.of("es", "CO"), "%,.0f", valor);
     }
 }
