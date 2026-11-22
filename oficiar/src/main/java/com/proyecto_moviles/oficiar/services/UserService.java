@@ -136,4 +136,20 @@ public class UserService {
                 .map(TrabajadorResponse::from)
                 .toList();
     }
+
+    // TOKEN PUSH: guarda (o borra con null) el celular donde el usuario recibe notificaciones
+    @Transactional
+    public void guardarTokenPush(String username, String token) {
+        Users user = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNoEncontradoException("Usuario no encontrado"));
+
+        if (token != null) {
+            if (!token.startsWith("ExponentPushToken[") && !token.startsWith("ExpoPushToken[")) {
+                throw new IllegalArgumentException("Token de notificaciones inválido");
+            }
+            usersRepository.liberarToken(token, user.getId());
+        }
+        user.setExpoPushToken(token);
+        usersRepository.save(user);
+    }
 }

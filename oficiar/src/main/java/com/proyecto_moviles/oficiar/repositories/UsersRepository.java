@@ -2,6 +2,7 @@ package com.proyecto_moviles.oficiar.repositories;
 
 import com.proyecto_moviles.oficiar.models.entities.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +31,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
             "AND (:perfilId IS NULL OR p.id = :perfilId)")
     List<Users> buscarTrabajadores(@Param("texto") String texto, @Param("perfilId") Long perfilId);
 
+    // Si este celular lo tenía otra cuenta, se le quita: un token es de un solo usuario
+    @Modifying
+    @Query("UPDATE Users u SET u.expoPushToken = null WHERE u.expoPushToken = :token AND u.id <> :id")
+    void liberarToken(@Param("token") String token, @Param("id") Long id);
 }

@@ -138,4 +138,11 @@ public class UserController {
         userService.deleteProfilePicture(auth.getName());
         return ResponseEntity.ok(Map.of("message", "Foto de perfil eliminada correctamente"));
     }
+
+    // PUT /api/usuarios/token-push  { "token": "ExponentPushToken[...]" } o { "token": null }
+    @PutMapping("/token-push")
+    public ResponseEntity<Void> guardarTokenPush(Authentication auth, @RequestBody Map<String, String> body) {
+        userService.guardarTokenPush(auth.getName(), body.get("token"));
+        return ResponseEntity.noContent().build();
+    }
 }
