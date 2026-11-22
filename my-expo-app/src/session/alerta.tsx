@@ -18,6 +18,7 @@ export interface Confirmacion {
   titulo: string;
   mensaje: string;
   textoConfirmar: string;
+  textoCancelar?: string;
   textoCargando?: string;
   peligro?: boolean;
   tituloError?: string;

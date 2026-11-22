@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import '../global.css';
+import { useNotificaciones } from '../src/hooks/useNotificaciones';
 import { AlertaProvider } from '../src/session/alerta';
 import { SessionProvider, useSession } from '../src/session/context';
 import { neutro, oficiar } from '../src/theme/tokens';
@@ -16,7 +17,8 @@ export default function RootLayout() {
 
 function Navigator() {
   const { user } = useSession();
-
+  useNotificaciones(!!user);
+  
   return (
     <Stack
       screenOptions={{

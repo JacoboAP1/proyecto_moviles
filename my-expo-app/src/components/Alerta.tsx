@@ -71,7 +71,7 @@ function Contenido({ entrada, onConfirmar, onCerrar }: Props & { entrada: Entrad
       <Textos titulo={entrada.titulo} mensaje={entrada.mensaje} />
       <View className="mt-2 flex-row gap-bento self-stretch">
         <Button
-          text="Cancelar"
+          text={entrada.textoCancelar ?? 'Cancelar'}
           variant="secondary"
           onPress={onCerrar}
           disabled={entrada.cargando}
