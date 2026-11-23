@@ -1,3 +1,4 @@
+
 package com.proyecto_moviles.oficiar.services.SolicitudServicio;
 
 import com.proyecto_moviles.oficiar.exceptions.PerfilExceptions.OficioNoEncontradoException;
@@ -6,6 +7,7 @@ import com.proyecto_moviles.oficiar.exceptions.SolicitudExceptions.EstadoInvalid
 import com.proyecto_moviles.oficiar.exceptions.SolicitudExceptions.SolicitudNoEncontradaException;
 import com.proyecto_moviles.oficiar.exceptions.UserExceptions.UserNoEncontradoException;
 import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.CrearSolicitudRequest;
+import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.EstadisticasResponse;
 import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.SolicitudResponse;
 import com.proyecto_moviles.oficiar.models.entities.*;
 import com.proyecto_moviles.oficiar.models.entities.SolicitudServicio.AccionSolicitud;
@@ -22,6 +24,10 @@ import java.util.Locale;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class SolicitudService {
@@ -97,6 +103,40 @@ public class SolicitudService {
                 : solicitudRepository.findByClienteIdOrderByFechaCreacionDesc(usuario.getId());
 
         return lista.stream().map(SolicitudResponse::from).toList();
+    }
+
+    // ESTADÍSTICAS: mis solicitudes contadas por grupo de estado, según el rol (números del home)
+    @Transactional(readOnly = true)
+    public EstadisticasResponse estadisticas(String username) {
+        Users usuario = buscarUsuario(username);
+        boolean esOfficer = tieneRol(usuario, "ROLE_WORKER");
+
+        List<Object[]> filas = esOfficer
+                ? solicitudRepository.contarPorEstadoComoOfficer(usuario.getId())
+                : solicitudRepository.contarPorEstadoComoCliente(usuario.getId());
+
+        Map<EstadoSolicitud, Long> porEstado = new EnumMap<>(EstadoSolicitud.class);
+        for (Object[] fila : filas) {
+            porEstado.put((EstadoSolicitud) fila[0], (Long) fila[1]);
+        }
+
+        // Al officer le toca responder las PENDIENTE; el cliente también espera mientras está COTIZADA
+        Set<EstadoSolicitud> pendientes = esOfficer
+                ? EnumSet.of(EstadoSolicitud.PENDIENTE)
+                : EnumSet.of(EstadoSolicitud.PENDIENTE, EstadoSolicitud.COTIZADA);
+        Set<EstadoSolicitud> activos = esOfficer
+                ? EnumSet.of(EstadoSolicitud.COTIZADA, EstadoSolicitud.ACEPTADA, EstadoSolicitud.EN_CURSO)
+                : EnumSet.of(EstadoSolicitud.ACEPTADA, EstadoSolicitud.EN_CURSO);
+
+        // RECHAZADA y CANCELADA no se cuentan
+        return new EstadisticasResponse(
+                sumar(porEstado, pendientes),
+                sumar(porEstado, activos),
+                porEstado.getOrDefault(EstadoSolicitud.FINALIZADA, 0L));
+    }
+
+    private static long sumar(Map<EstadoSolicitud, Long> porEstado, Set<EstadoSolicitud> estados) {
+        return estados.stream().mapToLong(e -> porEstado.getOrDefault(e, 0L)).sum();
     }
 
     // DETALLE: solo el cliente o el officer de esa solicitud pueden verla
