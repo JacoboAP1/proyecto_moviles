@@ -12,9 +12,11 @@ import SolicitudCard from '../components/SolicitudCard';
 import { useSolicitudes } from '../hooks/useSolicitudes';
 import { neutro } from '../theme/tokens';
 import type { Solicitud } from '../types';
+import { router, useLocalSearchParams } from 'expo-router';
 
 // Vista 3: la misma pantalla para cliente y officer; los botones cambian según rol y estado
 export default function Solicitudes() {
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const {
     esOfficer,
     solicitudes,
@@ -28,6 +30,10 @@ export default function Solicitudes() {
     cambiarEstado,
     cerrarSolicitud,
   } = useSolicitudes();
+
+  const visibles = id
+    ? solicitudes.filter((s) => String(s.id) === id)
+    : solicitudes;
 
   if (loading) {
     return (
@@ -54,18 +60,42 @@ export default function Solicitudes() {
   return (
     <FlatList
       className="flex-1 bg-oficiar-gray"
-      data={solicitudes}
+      data={visibles}
       keyExtractor={(s) => String(s.id)}
       contentContainerClassName="gap-bento p-bento-in pb-10"
       refreshing={refreshing}
       onRefresh={recargar}
       keyboardShouldPersistTaps="handled"
+      ListHeaderComponent={ 
+        id && visibles.length > 0 ? (
+          <Button
+            text="Ver todas"
+            icono="list-outline"
+            variant="secondary"
+            onPress={() => router.replace('/solicitudes')}
+          />
+        ) : undefined
+      }
       ListEmptyComponent={
+        id ? (                                               
+          <View className="mt-10 items-center gap-bento">
+            <Text className="text-center text-bento-body text-oficiar-dark">
+              Esta solicitud no está en tu cuenta.
+            </Text>
+            <Button
+              text="Ver todas"
+              icono="list-outline"
+              variant="secondary"
+              onPress={() => router.replace('/solicitudes')}
+            />
+          </View>
+        ) : (
         <Text className="mt-10 text-center text-bento-body text-oficiar-dark">
           {esOfficer
             ? 'Todavía no te han llegado solicitudes.'
             : 'Todavía no has hecho solicitudes. Pide un servicio desde el inicio.'}
         </Text>
+        )
       }
       renderItem={({ item }) => (
         <SolicitudCard solicitud={item} esOfficer={esOfficer}>

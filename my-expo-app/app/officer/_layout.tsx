@@ -1,7 +1,10 @@
 import { Drawer } from 'expo-router/drawer';
 import DrawerMenu from '../../src/components/DrawerMenu';
+import { useAbrirAviso } from '../../src/hooks/useAbrirAviso';
 
 export default function OfficerLayout() {
+  useAbrirAviso();
+  
   return (
     <Drawer
       drawerContent={(props) => <DrawerMenu {...props} />}
