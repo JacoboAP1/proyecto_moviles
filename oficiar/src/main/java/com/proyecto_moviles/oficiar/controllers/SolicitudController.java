@@ -1,7 +1,9 @@
+
 package com.proyecto_moviles.oficiar.controllers;
 
 import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.AceptarSolicitudRequest;
 import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.CrearSolicitudRequest;
+import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.EstadisticasResponse;
 import com.proyecto_moviles.oficiar.models.dto.SolicitudServicio.SolicitudResponse;
 import com.proyecto_moviles.oficiar.models.entities.SolicitudServicio.AccionSolicitud;
 import com.proyecto_moviles.oficiar.services.SolicitudServicio.SolicitudService;
@@ -36,6 +38,12 @@ public class SolicitudController {
     @GetMapping("/mias")
     public ResponseEntity<List<SolicitudResponse>> mias(Authentication auth) {
         return ResponseEntity.ok(solicitudService.misSolicitudes(auth.getName()));
+    }
+
+    // GET /api/solicitudes/estadisticas (números del home: pendientes, activos y finalizados según el rol)
+    @GetMapping("/estadisticas")
+    public ResponseEntity<EstadisticasResponse> estadisticas(Authentication auth) {
+        return ResponseEntity.ok(solicitudService.estadisticas(auth.getName()));
     }
 
     // GET /api/solicitudes/{id} (solo los dos participantes)
