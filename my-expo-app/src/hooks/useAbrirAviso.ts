@@ -10,7 +10,19 @@ export function useAbrirAviso() {
   useEffect(() => {
     const id = respuesta?.notification.request.content.data?.solicitudId;
     if (!id) return;
-    Notifications.clearLastNotificationResponse();   // si no, lo reabre en el próximo login
+    Notifications.clearLastNotificationResponse(); // si no, lo reabre en el próximo login
+
+    // Actualiza el estado de la solicitud cuando llega una nueva notificación
+    // Borra los avisos viejos de esa solicitud de la bandeja (si el usuario tocó uno, los demás ya no sirven)
+    Notifications.getPresentedNotificationsAsync()
+      .then((presentes) =>
+        Promise.all(
+          presentes
+            .filter((n) => n.request.content.data?.solicitudId === id)
+            .map((n) => Notifications.dismissNotificationAsync(n.request.identifier)),
+        ),
+      )
+      .catch(() => {});
     router.push({ pathname: '/solicitudes', params: { id: String(id) } });
   }, [respuesta, router]);
 }

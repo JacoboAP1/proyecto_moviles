@@ -54,4 +54,19 @@ export function useNotificaciones(conSesion: boolean) {
       });
     })().catch((e) => console.warn('Notificaciones no disponibles:', (e as Error).message));
   }, [conSesion, confirmar]);
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationReceivedListener(async (nuevo) => {
+      const id = nuevo.request.content.data?.solicitudId;
+      if (!id) return;
+      const presentes = await Notifications.getPresentedNotificationsAsync();
+      await Promise.all(
+        presentes
+          .filter((n) => n.request.identifier !== nuevo.request.identifier
+            && n.request.content.data?.solicitudId === id)
+          .map((n) => Notifications.dismissNotificationAsync(n.request.identifier)),
+      );
+    });
+    return () => sub.remove();
+  }, []);
 }

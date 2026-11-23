@@ -1,6 +1,5 @@
-
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   cambiarEstado,
   cotizarSolicitud,
@@ -10,6 +9,7 @@ import {
 import { useAlerta } from '../session/alerta';
 import { useSession } from '../session/context';
 import type { Solicitud } from '../types';
+import * as Notifications from 'expo-notifications';
 
 // Lista de "mis solicitudes" y sus acciones. Sirve para cliente y officer.
 export function useSolicitudes() {
@@ -41,6 +41,14 @@ export function useSolicitudes() {
       cargar();
     }, [cargar]),
   );
+
+  // Recarga sola si llega un aviso con la pantalla abierta
+  useEffect(() => {
+    const sub = Notifications.addNotificationReceivedListener(() => {
+      cargar();
+    });
+    return () => sub.remove();
+  }, [cargar]);
 
   // Deslizar hacia abajo
   const recargar = () => {
