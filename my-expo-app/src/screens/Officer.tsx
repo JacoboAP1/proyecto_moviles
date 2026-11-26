@@ -2,8 +2,10 @@ import { useRouter } from 'expo-router';
 import { ScrollView, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../components/Button';
+import EnVivo from '../components/EnVivo';
 import Logo from '../components/Logo';
 import MenuButton from '../components/MenuButton';
+import ResumenEstadisticas from '../components/ResumenEstadisticas';
 import StatCard from '../components/StatCard';
 import { useEstadisticas } from '../hooks/useEstadisticas';
 import { useSession } from '../session/context';
@@ -77,10 +79,13 @@ export default function Officer() {
           )}
         </View>
 
-        <Text className="text-xl font-extrabold text-oficiar-very-dark">
-          Tus{' '}
-          <Text className="text-oficiar-blue">estadísticas</Text>
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-xl font-extrabold text-oficiar-very-dark">
+            Tus{' '}
+            <Text className="text-oficiar-blue">estadísticas</Text>
+          </Text>
+          <EnVivo conectado={!error} />
+        </View>
 
         {/* Se actualizan solas cada 10 s mientras el home está abierto */}
         <View className="flex-row gap-3">
@@ -110,6 +115,17 @@ export default function Officer() {
           <Text className="text-center text-bento-label text-oficiar-dark">
             No se pudieron cargar tus estadísticas
           </Text>
+        )}
+        {estadisticas && (
+          <ResumenEstadisticas
+            palabra="trabajos"
+            finalizados={estadisticas.finalizados}
+            partes={[
+              { etiqueta: 'Por responder', valor: estadisticas.pendientes, color: oficiar.yellow },
+              { etiqueta: 'Activos', valor: estadisticas.activos, color: oficiar['blue-btn'] },
+              { etiqueta: 'Finalizados', valor: estadisticas.finalizados, color: oficiar.dark },
+            ]}
+          />
         )}
 
         <Text className="text-xl font-extrabold text-oficiar-very-dark">

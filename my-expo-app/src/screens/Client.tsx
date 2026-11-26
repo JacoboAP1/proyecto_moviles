@@ -3,7 +3,9 @@ import { ScrollView, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
+import EnVivo from '../components/EnVivo';
 import MenuButton from '../components/MenuButton';
+import ResumenEstadisticas from '../components/ResumenEstadisticas';
 import StatCard from '../components/StatCard';
 import { useEstadisticas } from '../hooks/useEstadisticas';
 import { useSession } from '../session/context';
@@ -66,10 +68,13 @@ export default function Client() {
       </View>
 
       <ScrollView className="flex-1" contentContainerClassName="px-4 pt-5 pb-10 gap-5">
-        <Text className="text-xl font-extrabold text-oficiar-very-dark">
-          Tus{' '}
-          <Text className="text-oficiar-blue">servicios</Text>
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-xl font-extrabold text-oficiar-very-dark">
+            Tus{' '}
+            <Text className="text-oficiar-blue">servicios</Text>
+          </Text>
+          <EnVivo conectado={!error} />
+        </View>
 
         {/* Se actualizan solas cada 10 s mientras el home está abierto */}
         <View className="flex-row gap-3">
@@ -99,6 +104,17 @@ export default function Client() {
           <Text className="text-center text-bento-label text-oficiar-dark">
             No se pudieron cargar tus estadísticas
           </Text>
+        )}
+        {estadisticas && (
+          <ResumenEstadisticas
+            palabra="servicios"
+            finalizados={estadisticas.finalizados}
+            partes={[
+              { etiqueta: 'Esperando', valor: estadisticas.pendientes, color: oficiar.yellow },
+              { etiqueta: 'En curso', valor: estadisticas.activos, color: oficiar['blue-btn'] },
+              { etiqueta: 'Finalizados', valor: estadisticas.finalizados, color: oficiar.dark },
+            ]}
+          />
         )}
 
         <Text className="text-xl font-extrabold text-oficiar-very-dark">
