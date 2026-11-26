@@ -12,6 +12,7 @@ module.exports = {
         oficiar: tokens.oficiar,
         neutro: tokens.neutro,
         peligro: tokens.peligro,
+        exito: tokens.exito,
       },
       borderRadius: tokens.radio,
       spacing: tokens.espacio,

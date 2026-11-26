@@ -24,6 +24,13 @@ const peligro = {
   suave: '#FEE4E2',
 };
 
+// Estados positivos (datos en vivo, conexión correcta)
+const exito = {
+  DEFAULT: '#12B76A', // punto/indicador (no texto)
+  suave: '#D1FADF', // fondo
+  texto: '#067647', // texto sobre el fondo suave: contraste 5.0:1
+};
+
 // Bordes redondeados de los bloques Bento
 const radio = {
   bento: '20px',
@@ -49,4 +56,4 @@ const toque = {
   toque: '48px',
 };
 
-module.exports = { oficiar, neutro, peligro, radio, espacio, texto, toque };
+module.exports = { oficiar, neutro, peligro, exito, radio, espacio, texto, toque };
