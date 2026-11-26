@@ -20,11 +20,17 @@
           "cameraPermission": "La aplicación requiere acceso a la cámara para tomar una foto de perfil."
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icono-notificacion.png",
+          "color": "#3D80B7"
+        }
+      ],
       "expo-font"
     ],
     "orientation": "portrait",
-    "icon": "./assets/logo_oficiar.png",
+    "icon": "./assets/icono-app.png",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
@@ -38,7 +44,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo_oficiar.png",
+        "foregroundImage": "./assets/icono-adaptativo.png",
         "backgroundColor": "#051A26"
       },
       "package": "com.victormanuel1.oficiar",
