@@ -107,6 +107,12 @@ export default function Solicitudes() {
             cambiarEstado={cambiarEstado}
             cerrarSolicitud={cerrarSolicitud}
           />
+          <Button
+            text="Abrir chat"
+            icono="chatbubbles-outline"
+            variant="secondary"
+            onPress={() => router.push(`/chat/${item.id}`)}
+          />
         </SolicitudCard>
       )}
     />
