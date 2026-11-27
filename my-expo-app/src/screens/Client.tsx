@@ -1,12 +1,14 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, Text, View, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Logo from '../components/Logo';
+import { ScrollView, Text, View } from 'react-native';
 import Button from '../components/Button';
+import Encabezado from '../components/Encabezado';
 import EnVivo from '../components/EnVivo';
-import MenuButton from '../components/MenuButton';
+import type { NombreIcono } from '../components/Icono';
+import OfertaCard from '../components/OfertaCard';
 import ResumenEstadisticas from '../components/ResumenEstadisticas';
+import ServicioTile from '../components/ServicioTile';
 import StatCard from '../components/StatCard';
+import TituloSeccion from '../components/TituloSeccion';
 import { useEstadisticas } from '../hooks/useEstadisticas';
 import { useSession } from '../session/context';
 import { oficiar } from '../theme/tokens';
@@ -26,55 +28,25 @@ const servicios = [
   'Plomería',
 ];
 
+const ofertas: { titulo: string; icono: NombreIcono }[] = [
+  { titulo: '20% OFF limpieza', icono: 'sparkles-outline' },
+  { titulo: 'Descuento flash', icono: 'flash-outline' },
+  { titulo: 'Plomería gratis', icono: 'water-outline' },
+];
+
 export default function Client() {
   const { user } = useSession();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { estadisticas, error } = useEstadisticas();
   const verSolicitudes = () => router.push('/solicitudes');
+  const solicitar = () => router.push('/solicitar');
 
   return (
     <View className="flex-1 bg-oficiar-gray">
-      <View className="bg-oficiar-very-dark px-4 pb-3" style={{ paddingTop: insets.top + 8 }}>
-        <View className="flex-row items-center">
-          <View className="w-10">
-            <MenuButton />
-          </View>
-          <View className="flex-1 items-center">
-            <Logo size="sm" light />
-          </View>
-          <View className="w-10" />
-        </View>
-        <View className="items-center gap-1">
-          <Text className="text-lg font-bold text-white">
-            Hola, {user?.name}
-          </Text>
-          <View className="mt-1 rounded-full bg-green-500/20 px-4 py-1">
-            <Text className="text-xs font-semibold text-green-400">Cliente</Text>
-          </View>
-        </View>
-
-        <View className="mt-3 flex-row justify-center gap-4">
-          <Pressable className="rounded-lg bg-oficiar-blue px-4 py-2">
-            <Text className="text-sm font-semibold text-white">Inicio</Text>
-          </Pressable>
-          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/solicitudes')}>
-            <Text className="text-sm text-white/70">Solicitudes</Text>
-          </Pressable>
-          <Pressable className="rounded-lg px-4 py-2" onPress={() => router.push('/profile')}>
-            <Text className="text-sm text-white/70">Perfil</Text>
-          </Pressable>
-        </View>
-      </View>
+      <Encabezado nombre={user?.name ?? ''} rol="cliente" />
 
       <ScrollView className="flex-1" contentContainerClassName="px-4 pt-5 pb-10 gap-5">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-xl font-extrabold text-oficiar-very-dark">
-            Tus{' '}
-            <Text className="text-oficiar-blue">servicios</Text>
-          </Text>
-          <EnVivo conectado={!error} />
-        </View>
+        <TituloSeccion texto="Tus" resaltado="servicios" derecha={<EnVivo conectado={!error} />} />
 
         {/* Se actualizan solas cada 10 s mientras el home está abierto */}
         <View className="flex-row gap-3">
@@ -117,46 +89,23 @@ export default function Client() {
           />
         )}
 
-        <Text className="text-xl font-extrabold text-oficiar-very-dark">
-          Nuestros{' '}
-          <Text className="text-oficiar-blue">servicios</Text>
-        </Text>
+        <TituloSeccion texto="Nuestros" resaltado="servicios" />
 
+        {/* Tocar un servicio lleva a pedirlo */}
         <View className="flex-row flex-wrap gap-3">
           {servicios.map((s) => (
-            <Pressable
-              key={s}
-              className="w-[31%] items-center rounded-xl bg-white p-4 active:opacity-80">
-              <Text className="text-center text-xs font-medium text-oficiar-very-dark">
-                {s}
-              </Text>
-            </Pressable>
+            <ServicioTile key={s} nombre={s} onPress={solicitar} />
           ))}
         </View>
 
-        <Button
-          text="Solicitar un servicio"
-          icono="add-circle-outline"
-          onPress={() => router.push('/solicitar')}
-        />
+        <Button text="Solicitar un servicio" icono="add-circle-outline" onPress={solicitar} />
 
-        <Text className="text-xl font-extrabold text-oficiar-very-dark">
-          Ofertas{' '}
-          <Text className="text-oficiar-blue">exclusivas</Text>
-        </Text>
+        <TituloSeccion texto="Ofertas" resaltado="exclusivas" />
 
         <View className="flex-row flex-wrap gap-3">
-          {['20% OFF limpieza', 'Descuento flash', 'Plomería gratis'].map(
-            (oferta) => (
-              <View
-                key={oferta}
-                className="w-[31%] items-center rounded-xl border border-oficiar-blue/20 bg-white p-4">
-                <Text className="text-center text-xs font-medium text-oficiar-very-dark">
-                  {oferta}
-                </Text>
-              </View>
-            ),
-          )}
+          {ofertas.map((o) => (
+            <OfertaCard key={o.titulo} titulo={o.titulo} icono={o.icono} />
+          ))}
         </View>
       </ScrollView>
     </View>
