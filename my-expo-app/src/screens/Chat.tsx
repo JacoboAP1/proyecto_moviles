@@ -6,6 +6,7 @@ import BurbujaMensaje from '../components/BurbujaMensaje';
 import CampoMensaje from '../components/CampoMensaje';
 import EnVivo from '../components/EnVivo';
 import EstadoChip from '../components/EstadoChip';
+import EstadoVacio from '../components/EstadoVacio';
 import { useChat } from '../hooks/useChat';
 import { useSession } from '../session/context';
 import type { EstadoSolicitud, Solicitud } from '../types';
@@ -78,11 +79,20 @@ export default function Chat() {
             </View>
           ) : mensajes.length === 0 ? (
             // Fuera de la FlatList: en una lista invertida este texto saldría al revés
-            <View className="flex-1 items-center justify-center p-6">
-              <Text className="text-center text-bento-body text-oficiar-dark">
-                {error ??
-                  `Todavía no hay mensajes. Escríbele a ${otro} para coordinar el servicio.`}
-              </Text>
+            <View className="flex-1 justify-center p-bento-in">
+              {error ? (
+                <EstadoVacio
+                  icono="cloud-offline-outline"
+                  titulo="No se pudo cargar el chat"
+                  mensaje={error}
+                />
+              ) : (
+                <EstadoVacio
+                  icono="chatbubbles-outline"
+                  titulo="Todavía no hay mensajes"
+                  mensaje={`Escríbele a ${otro} para coordinar el servicio.`}
+                />
+              )}
             </View>
           ) : (
             <FlatList
