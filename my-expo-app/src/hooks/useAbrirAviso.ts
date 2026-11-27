@@ -2,13 +2,14 @@ import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
  
-// Al tocar un aviso (app abierta, en segundo plano o cerrada) abre esa solicitud
+// Al tocar un aviso (app abierta, en segundo plano o cerrada) abre esa solicitud, o su chat si es un mensaje
 export function useAbrirAviso() {
   const router = useRouter();
   const respuesta = Notifications.useLastNotificationResponse();
- 
+
   useEffect(() => {
-    const id = respuesta?.notification.request.content.data?.solicitudId;
+    const datos = respuesta?.notification.request.content.data;
+    const id = datos?.solicitudId;
     if (!id) return;
     Notifications.clearLastNotificationResponse(); // si no, lo reabre en el próximo login
 
@@ -23,6 +24,7 @@ export function useAbrirAviso() {
         ),
       )
       .catch(() => {});
-    router.push({ pathname: '/solicitudes', params: { id: String(id) } });
+    if (datos?.tipo === 'MENSAJE') router.push(`/chat/${id}`);
+    else router.push({ pathname: '/solicitudes', params: { id: String(id) } });
   }, [respuesta, router]);
 }
