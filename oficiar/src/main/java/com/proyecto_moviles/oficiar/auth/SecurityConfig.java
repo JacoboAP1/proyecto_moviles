@@ -65,6 +65,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
                         // Permite traer la lista de los perfiles profesionales al formulario de registro en WORKER
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/perfiles").permitAll()
+                        // El socket del chat valida el token en ChatHandshakeInterceptor (el navegador no envía cabeceras)
+                        .requestMatchers("/ws/**").permitAll()
                         // El resto de endpoints requieren autenticación
                         .anyRequest().authenticated()
                 )
