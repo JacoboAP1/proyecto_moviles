@@ -41,6 +41,17 @@ export interface Estadisticas {
   finalizados: number;
 }
 
+// Mensaje del chat de una solicitud (REST y socket). "mio" lo calcula el backend para quien lo recibe
+export interface Mensaje {
+  id: number;
+  solicitudId: number;
+  autorId: number;
+  autorNombre: string;
+  texto: string;
+  fechaEnvio: string; // ISO en UTC, ej: "2026-11-27T14:19:41.688Z"
+  mio: boolean;
+}
+
 // Solicitud que devuelve el backend en /api/solicitudes
 export interface Solicitud {
   id: number;

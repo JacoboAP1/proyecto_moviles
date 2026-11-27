@@ -21,6 +21,11 @@ export async function getMisSolicitudes(): Promise<Solicitud[]> {
   return request<Solicitud[]>('/api/solicitudes/mias');
 }
 
+// Una solicitud (solo si soy su cliente o su officer; si no, 404)
+export async function getSolicitud(id: number): Promise<Solicitud> {
+  return request<Solicitud>(`/api/solicitudes/${id}`);
+}
+
 // Conteo de mis solicitudes por grupo de estado (lo calcula el backend según el rol)
 export async function getEstadisticas(): Promise<Estadisticas> {
   return request<Estadisticas>('/api/solicitudes/estadisticas');

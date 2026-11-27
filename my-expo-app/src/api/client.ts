@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system/legacy';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080/oficiar';
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080/oficiar';
 
 let token: string | null = null;
 
