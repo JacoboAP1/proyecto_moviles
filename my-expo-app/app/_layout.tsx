@@ -38,6 +38,7 @@ function Navigator() {
         <Stack.Screen name="solicitar" options={{ title: 'Solicitar servicio' }} />
         <Stack.Screen name="elegir-officer" options={{ title: 'Elegir officer' }} />
         <Stack.Screen name="solicitudes" options={{ title: 'Solicitudes' }} />
+        <Stack.Screen name="chat/[id]" options={{ title: 'Chat' }} />
       </Stack.Protected>
 
       {/* 3. Rutas solo para usuarios NO AUTENTICADOS */}
