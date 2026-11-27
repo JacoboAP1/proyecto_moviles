@@ -1,13 +1,8 @@
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Text, TextInput, View } from 'react-native';
 import type { AccionSolicitud } from '../api/solicitudes';
 import Button from '../components/Button';
+import EstadoVacio from '../components/EstadoVacio';
 import SolicitudCard from '../components/SolicitudCard';
 import { useSolicitudes } from '../hooks/useSolicitudes';
 import { neutro } from '../theme/tokens';
@@ -31,9 +26,7 @@ export default function Solicitudes() {
     cerrarSolicitud,
   } = useSolicitudes();
 
-  const visibles = id
-    ? solicitudes.filter((s) => String(s.id) === id)
-    : solicitudes;
+  const visibles = id ? solicitudes.filter((s) => String(s.id) === id) : solicitudes;
 
   if (loading) {
     return (
@@ -47,12 +40,7 @@ export default function Solicitudes() {
     return (
       <View className="flex-1 items-center justify-center gap-bento bg-oficiar-gray p-bento-in">
         <Text className="text-center text-bento-body text-oficiar-dark">{error}</Text>
-        <Button
-          text="Reintentar"
-          icono="refresh"
-          variant="secondary"
-          onPress={reintentar}
-        />
+        <Button text="Reintentar" icono="refresh" variant="secondary" onPress={reintentar} />
       </View>
     );
   }
@@ -66,7 +54,7 @@ export default function Solicitudes() {
       refreshing={refreshing}
       onRefresh={recargar}
       keyboardShouldPersistTaps="handled"
-      ListHeaderComponent={ 
+      ListHeaderComponent={
         id && visibles.length > 0 ? (
           <Button
             text="Ver todas"
@@ -77,7 +65,7 @@ export default function Solicitudes() {
         ) : undefined
       }
       ListEmptyComponent={
-        id ? (                                               
+        id ? (
           <View className="mt-10 items-center gap-bento">
             <Text className="text-center text-bento-body text-oficiar-dark">
               Esta solicitud no está en tu cuenta.
@@ -89,12 +77,20 @@ export default function Solicitudes() {
               onPress={() => router.replace('/solicitudes')}
             />
           </View>
+        ) : esOfficer ? (
+          <EstadoVacio
+            icono="mail-open-outline"
+            titulo="Todavía no te han llegado solicitudes"
+            mensaje="Cuando un cliente te pida un servicio, aparecerá aquí para que lo cotices."
+          />
         ) : (
-        <Text className="mt-10 text-center text-bento-body text-oficiar-dark">
-          {esOfficer
-            ? 'Todavía no te han llegado solicitudes.'
-            : 'Todavía no has hecho solicitudes. Pide un servicio desde el inicio.'}
-        </Text>
+          <EstadoVacio
+            icono="document-text-outline"
+            titulo="Todavía no has hecho solicitudes"
+            mensaje="Pide un servicio y aquí verás cómo avanza."
+            textoBoton="Solicitar un servicio"
+            onPress={() => router.push('/solicitar')}
+          />
         )
       }
       renderItem={({ item }) => (
@@ -164,7 +160,8 @@ function Acciones({
             disabled={!precio}
           />
           <Button
-            text="Rechazar" icono="close-circle-outline"
+            text="Rechazar"
+            icono="close-circle-outline"
             variant="danger"
             onPress={() => confirmar('rechazar')}
           />
@@ -199,7 +196,8 @@ function Acciones({
       <View className="gap-2">
         <Aviso texto="Esperando la cotización del officer." />
         <Button
-          text="Cancelar" icono="close-outline"
+          text="Cancelar"
+          icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
@@ -216,12 +214,14 @@ function Acciones({
           onPress={() => cambiarEstado(id, 'aceptar')}
         />
         <Button
-          text="Rechazar" icono="close-circle-outline"
+          text="Rechazar"
+          icono="close-circle-outline"
           variant="danger"
           onPress={() => confirmar('rechazar')}
         />
         <Button
-          text="Cancelar" icono="close-outline"
+          text="Cancelar"
+          icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
@@ -234,7 +234,8 @@ function Acciones({
       <View className="gap-2">
         <Aviso texto="Esperando que el officer inicie el trabajo." />
         <Button
-          text="Cancelar" icono="close-outline"
+          text="Cancelar"
+          icono="close-outline"
           variant="secondary"
           onPress={() => confirmar('cancelar')}
         />
