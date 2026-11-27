@@ -35,7 +35,7 @@ public class NotificacionService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void alGuardar(AvisoPush aviso) {
         enviar(aviso.destinatario(), aviso.titulo(), aviso.cuerpo(),
-                Map.of("tipo", "SOLICITUD", "solicitudId", aviso.solicitudId()));
+                Map.of("tipo", aviso.tipo(), "solicitudId", aviso.solicitudId()));
     }
 
     public void enviar(Users destinatario, String titulo, String cuerpo, Map<String, Object> datos) {
